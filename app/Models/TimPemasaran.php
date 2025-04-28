@@ -21,4 +21,14 @@ class TimPemasaran extends Model
     {
         $this->attributes['kata_sandi'] = bcrypt($value);
     }
+
+    public function platform()
+    {
+        return $this->belongsTo(Platform::class, 'id_platform');
+    }
+
+    public function biayaPemasaran()
+    {
+        return $this->belongsTo(BiayaPemasaran::class, 'id_pemasaran');
+    }
 }

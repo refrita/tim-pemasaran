@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 class TimPemasaranController extends Controller
 {
     private $data = [
-        ['id' => 1, 'nama_anggota' => 'Aditya', 'jabatan' => 'Leader', 'nama_pengguna' => 'aditya01', 'kata_sandi' => '12345', 'id_platform' => 1, 'id_pemasaran' => 1],
-        ['id' => 2, 'nama_anggota' => 'Budi', 'jabatan' => 'SEO Specialist', 'nama_pengguna' => 'budi99', 'kata_sandi' => 'abcde', 'id_platform' => 2, 'id_pemasaran' => 1],
+        ['id' => 101, 'nama_anggota' => 'Aditya', 'jabatan' => 'Leader', 'nama_pengguna' => 'aditya01', 'id_platform' => 201, 'id_pemasaran' => 301],
+        ['id' => 102, 'nama_anggota' => 'Budi', 'jabatan' => 'SEO Specialist', 'nama_pengguna' => 'budi99', 'id_platform' => 202, 'id_pemasaran' => 301],
     ];
 
     public function index()

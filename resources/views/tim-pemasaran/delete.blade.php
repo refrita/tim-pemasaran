@@ -1,10 +1,13 @@
-<h1>Hapus Anggota</h1>
+@extends('layouts.app')
 
-<p>Yakin ingin menghapus <strong>{{ $item['nama_anggota'] }}</strong>?</p>
+@section('title', 'Konfirmasi Hapus')
 
-<form action="{{ url('/tim-pemasaran/' . $item['id']) }}" method="POST">
+@section('content')
+<p>Yakin ingin menghapus {{ $item['nama_anggota'] }} ({{ $item['jabatan'] }})?</p>
+<form action="/tim-pemasaran/{{ $item['id'] }}" method="POST">
     @csrf
     @method('DELETE')
     <button type="submit">Ya, Hapus</button>
-    <a href="{{ url('/tim-pemasaran') }}">Batal</a>
+    <a href="/tim-pemasaran">Batal</a>
 </form>
+@endsection

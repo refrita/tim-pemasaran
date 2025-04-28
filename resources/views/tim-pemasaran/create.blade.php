@@ -1,14 +1,16 @@
-<h1>Tambah Anggota</h1>
+@extends('layouts.app')
 
-<form action="{{ url('/tim-pemasaran') }}" method="POST">
+@section('title', 'Tambah Anggota Tim')
+
+@section('content')
+<form action="/tim-pemasaran" method="POST">
     @csrf
-    <input name="nama_anggota" placeholder="Nama"><br>
-    <input name="jabatan" placeholder="Jabatan"><br>
-    <input name="nama_pengguna" placeholder="Username"><br>
-    <input name="kata_sandi" type="password" placeholder="Password"><br>
-    <input name="id_platform" placeholder="ID Platform"><br>
-    <input name="id_pemasaran" placeholder="ID Pemasaran"><br>
+    Nama: <input type="text" name="nama_anggota"><br>
+    Jabatan: <input type="text" name="jabatan"><br>
+    Nama Pengguna: <input type="text" name="nama_pengguna"><br>
+    Kata Sandi: <input type="password" name="kata_sandi"><br>
+    ID Platform: <input type="number" name="id_platform"><br>
+    ID Pemasaran: <input type="number" name="id_pemasaran"><br>
     <button type="submit">Simpan</button>
-    <a href="{{ url('/tim-pemasaran') }}">⬅ Kembali</a>
-
 </form>
+@endsection
