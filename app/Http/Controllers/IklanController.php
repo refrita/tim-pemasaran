@@ -3,66 +3,101 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Iklan;
 
 class IklanController extends Controller
 {
-    private $data = [
-        ['id' => 601, 'judul_iklan' => 'Promo Game A', 'deskripsi' => 'Diskon besar-besaran!', 'tanggal_mulai' => '2025-04-01', 'tanggal_selesai' => '2025-04-15', 'status' => 'Aktif', 'id_tim_pemasaran' => 101],
-        ['id' => 602, 'judul_iklan' => 'Event Game B', 'deskripsi' => 'Turnamen dan hadiah menarik!', 'tanggal_mulai' => '2025-04-05', 'tanggal_selesai' => '2025-04-20', 'status' => 'Nonaktif', 'id_tim_pemasaran' => 102],
-    ];
-
-    private $tim = [
-        101 => 'Aditya (Leader)',
-        102 => 'Budi (SEO Specialist)',
-    ];
-
+    // Menampilkan daftar semua iklan
     public function index()
     {
-        $iklan = collect($this->data)->map(function ($item) {
-            $item['nama_tim'] = $this->tim[$item['id_tim_pemasaran']] ?? 'Unknown';
-            return $item;
-        });
-        return view('iklan.index', compact('iklan'));
+        return view('iklan.index', [
+            'iklan' => Iklan::all()
+        ]);
     }
 
-    public function show($id)
-    {
-        $item = collect($this->data)->firstWhere('id', $id);
-        $item['nama_tim'] = $this->tim[$item['id_tim_pemasaran']] ?? 'Unknown';
-        return view('iklan.show', compact('item'));
-    }
-
+    // Menampilkan form tambah iklan
     public function create()
     {
-        $tim = $this->tim;
-        return view('iklan.create', compact('tim'));
+        return view('iklan.create');
     }
 
+    // Menyimpan data iklan baru
     public function store(Request $request)
     {
-        return redirect('/iklan')->with('success', 'Data iklan disimpan (simulasi)');
+        $request->validate([
+            'id_biaya_pemasaran' => 'required|integer',
+            'id_platform' => 'required|integer',
+            'nama' => 'required|string|max:50',
+            'kategori' => 'required|string|max:100',
+            'tanggal_peluncuran' => 'required|date',
+            'tanggal_selesai' => 'required|date',
+        ]);
+
+        Iklan::create([
+            'id_biaya_pemasaran' => $request->id_biaya_pemasaran,
+            'id_platform' => $request->id_platform,
+            'nama' => $request->nama,
+            'kategori' => $request->kategori,
+            'tanggal_peluncuran' => $request->tanggal_peluncuran,
+            'tanggal_selesai' => $request->tanggal_selesai,
+        ]);
+
+        return redirect()->route('iklan.index')->with('success', 'Data iklan berhasil disimpan');
     }
 
+    // Menampilkan detail iklan
+    public function show($id)
+    {
+        $iklan = Iklan::findOrFail($id);
+        return view('iklan.show', compact('iklan'));
+    }
+
+    // Menampilkan form edit iklan
     public function edit($id)
     {
-        $item = collect($this->data)->firstWhere('id', $id);
-        $tim = $this->tim;
-        return view('iklan.edit', compact('item', 'tim'));
+        $iklan = Iklan::findOrFail($id);
+        return view('iklan.edit', compact('iklan'));
     }
 
+    // Memproses update data iklan
     public function update(Request $request, $id)
     {
-        return redirect('/iklan')->with('success', 'Data iklan diupdate (simulasi)');
+        $request->validate([
+            'id_biaya_pemasaran' => 'required|integer',
+            'id_platform' => 'required|integer',
+            'nama' => 'required|string|max:50',
+            'kategori' => 'required|string|max:100',
+            'tanggal_peluncuran' => 'required|date',
+            'tanggal_selesai' => 'required|date',
+        ]);
+
+        $iklan = Iklan::findOrFail($id);
+
+        $iklan->update([
+            'id_biaya_pemasaran' => $request->id_biaya_pemasaran,
+            'id_platform' => $request->id_platform,
+            'nama' => $request->nama,
+            'kategori' => $request->kategori,
+            'tanggal_peluncuran' => $request->tanggal_peluncuran,
+            'tanggal_selesai' => $request->tanggal_selesai,
+        ]);
+
+        return redirect()->route('iklan.show', $id)->with('success', 'Data iklan berhasil diperbarui');
     }
 
+    // Menampilkan halaman konfirmasi hapus
     public function delete($id)
     {
-        $item = collect($this->data)->firstWhere('id', $id);
-        return view('iklan.delete', compact('item'));
+        $iklan = Iklan::findOrFail($id);
+        return view('iklan.delete', compact('iklan'));
     }
 
+    // Menghapus data iklan
     public function destroy($id)
     {
-        return redirect('/iklan')->with('success', 'Data iklan dihapus (simulasi)');
+        $iklan = Iklan::findOrFail($id);
+        $iklan->delete();
+
+        return redirect()->route('iklan.index')->with('success', 'Data iklan berhasil dihapus');
     }
 }

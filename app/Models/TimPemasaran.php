@@ -2,33 +2,37 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TimPemasaran extends Model
 {
-    protected $table = 'tim_pemasaran';
+    use HasFactory;
 
+    protected $table = 'TIM_PEMASARANS';
     protected $fillable = [
+        'id_biaya_pemasaran',
+        'id_platform',
         'nama_anggota',
-        'jabatan',
+        'jabatan_anggota',
         'nama_pengguna',
         'kata_sandi',
-        'id_platform',
-        'id_pemasaran',
     ];
 
-    public function setKataSandiAttribute($value)
+    protected $primaryKey = 'id';
+
+    public $incrementing = true;
+    protected $keyType = 'int';
+
+    public $timestamps = false;
+
+    public static function getAll()
     {
-        $this->attributes['kata_sandi'] = bcrypt($value);
+        return self::all();
     }
 
-    public function platform()
+    public static function find($id)
     {
-        return $this->belongsTo(Platform::class, 'id_platform');
-    }
-
-    public function biayaPemasaran()
-    {
-        return $this->belongsTo(BiayaPemasaran::class, 'id_pemasaran');
+        return self::where('id', $id)->first();
     }
 }

@@ -3,8 +3,8 @@
 @section('title', 'Konfirmasi Hapus Platform')
 
 @section('content')
-<p>Yakin ingin menghapus platform {{ $item['nama_platform'] }}?</p>
-<form action="/platform/{{ $item['id'] }}" method="POST">
+<p>Yakin ingin menghapus platform {{ $platform->nama }}?</p>
+<form action="/platform/{{ $platform->id }}" method="POST">
     @csrf
     @method('DELETE')
     <button type="submit">Ya, Hapus</button>

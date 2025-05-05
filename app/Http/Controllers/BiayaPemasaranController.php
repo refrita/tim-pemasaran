@@ -3,23 +3,15 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\BiayaPemasaran;
 
 class BiayaPemasaranController extends Controller
 {
-    private $data = [
-        ['id' => 301, 'total_anggaran' => 10000000, 'anggaran_tersedia' => 2500000, 'bulan_berlaku' => '2025-04-01', 'status' => 'Aktif'],
-        ['id' => 302, 'total_anggaran' => 15000000, 'anggaran_tersedia' => 5000000, 'bulan_berlaku' => '2025-05-01', 'status' => 'Menunggu'],
-    ];
-
     public function index()
     {
-        return view('biaya-pemasaran.index', ['biaya' => $this->data]);
-    }
-
-    public function show($id)
-    {
-        $item = collect($this->data)->firstWhere('id', $id);
-        return view('biaya-pemasaran.show', compact('item'));
+        return view('biaya-pemasaran.index', [
+            'biaya' => BiayaPemasaran::all()
+        ]);
     }
 
     public function create()
@@ -29,28 +21,56 @@ class BiayaPemasaranController extends Controller
 
     public function store(Request $request)
     {
-        return redirect('/biaya-pemasaran')->with('success', 'Data berhasil disimpan (simulasi)');
+        $request->validate([
+            'total_anggaran' => 'required|integer',
+            'anggaran_tersedia' => 'required|integer',
+            'bulan_berlaku' => 'required|date',
+            'status' => 'required|string|max:50',
+        ]);
+
+        BiayaPemasaran::create($request->all());
+
+        return redirect()->route('biaya-pemasaran.index')->with('success', 'Data biaya berhasil disimpan');
+    }
+
+    public function show($id)
+    {
+        $biaya = BiayaPemasaran::findOrFail($id);
+        return view('biaya-pemasaran.show', compact('biaya'));
     }
 
     public function edit($id)
     {
-        $item = collect($this->data)->firstWhere('id', $id);
-        return view('biaya-pemasaran.edit', compact('item'));
+        $biaya = BiayaPemasaran::findOrFail($id);
+        return view('biaya-pemasaran.edit', compact('biaya'));
     }
 
     public function update(Request $request, $id)
     {
-        return redirect('/biaya-pemasaran')->with('success', 'Data berhasil diupdate (simulasi)');
+        $request->validate([
+            'total_anggaran' => 'required|integer',
+            'anggaran_tersedia' => 'required|integer',
+            'bulan_berlaku' => 'required|date',
+            'status' => 'required|string|max:50',
+        ]);
+
+        $biaya = BiayaPemasaran::findOrFail($id);
+        $biaya->update($request->all());
+
+        return redirect()->route('biaya-pemasaran.show', $id)->with('success', 'Data biaya berhasil diperbarui');
     }
 
     public function delete($id)
     {
-        $item = collect($this->data)->firstWhere('id', $id);
-        return view('biaya-pemasaran.delete', compact('item'));
+        $biaya = BiayaPemasaran::findOrFail($id);
+        return view('biaya-pemasaran.delete', compact('biaya'));
     }
 
     public function destroy($id)
     {
-        return redirect('/biaya-pemasaran')->with('success', 'Data berhasil dihapus (simulasi)');
+        $biaya = BiayaPemasaran::findOrFail($id);
+        $biaya->delete();
+
+        return redirect()->route('biaya-pemasaran.index')->with('success', 'Data biaya berhasil dihapus');
     }
 }

@@ -5,17 +5,12 @@
 @section('content')
 <form action="/iklan" method="POST">
     @csrf
-    Judul Iklan: <input type="text" name="judul_iklan"><br>
-    Deskripsi: <textarea name="deskripsi"></textarea><br>
-    Tanggal Mulai: <input type="date" name="tanggal_mulai"><br>
+    Nama Iklan: <input type="text" name="nama"><br>
+    Kategori: <input type="text" name="kategori"><br>
+    Tanggal Peluncuran: <input type="date" name="tanggal_peluncuran"><br>
     Tanggal Selesai: <input type="date" name="tanggal_selesai"><br>
-    Status: <input type="text" name="status"><br>
-    Tim Pemasaran:
-    <select name="id_tim_pemasaran">
-        @foreach ($tim as $id => $nama)
-            <option value="{{ $id }}">{{ $nama }}</option>
-        @endforeach
-    </select><br>
+    ID Biaya Pemasaran: <input type="number" name="id_biaya_pemasaran"><br>
+    ID Platform: <input type="number" name="id_platform"><br>
     <button type="submit">Simpan</button>
 </form>
 @endsection

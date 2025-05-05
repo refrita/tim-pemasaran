@@ -7,7 +7,7 @@
 <ul>
 @foreach ($performa as $p)
     <li>
-        {{ $p['tanggal'] }} - {{ $p['nama_iklan'] }} | Tayang: {{ $p['jumlah_tayang'] }}, Klik: {{ $p['jumlah_klik'] }}, Konversi: {{ $p['konversi'] }}
+        {{ $p->jumlah_tayang }} - {{ $p->jumlah_klik }} - {{ $p->konversi }} - {{ $p->tanggal }}
         <a href="/performa/{{ $p['id'] }}">Lihat</a>
         <a href="/performa/{{ $p['id'] }}/edit">Edit</a>
         <a href="/performa/{{ $p['id'] }}/delete">Hapus</a>

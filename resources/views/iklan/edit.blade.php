@@ -3,20 +3,17 @@
 @section('title', 'Edit Iklan')
 
 @section('content')
-<form action="/iklan/{{ $item['id'] }}" method="POST">
+<form action="/iklan/{{ $iklan->id }}" method="POST">
     @csrf
     @method('PUT')
-    Judul Iklan: <input type="text" name="judul_iklan" value="{{ $item['judul_iklan'] }}"><br>
-    Deskripsi: <textarea name="deskripsi">{{ $item['deskripsi'] }}</textarea><br>
-    Tanggal Mulai: <input type="date" name="tanggal_mulai" value="{{ $item['tanggal_mulai'] }}"><br>
-    Tanggal Selesai: <input type="date" name="tanggal_selesai" value="{{ $item['tanggal_selesai'] }}"><br>
-    Status: <input type="text" name="status" value="{{ $item['status'] }}"><br>
-    Tim Pemasaran:
-    <select name="id_tim_pemasaran">
-        @foreach ($tim as $id => $nama)
-            <option value="{{ $id }}" {{ $id == $item['id_tim_pemasaran'] ? 'selected' : '' }}>{{ $nama }}</option>
-        @endforeach
-    </select><br>
+    Nama Iklan: <input type="text" name="nama" value="{{ $iklan->nama }}"><br>
+    Kategori: <input type="text" name="kategori" value="{{ $iklan->kategori }}"><br>
+    Tanggal Peluncuran: <input type="date" name="tanggal_peluncuran" value="{{ $iklan->tanggal_peluncuran }}"><br>
+    Tanggal Selesai: <input type="date" name="tanggal_selesai" value="{{ $iklan->tanggal_selesai }}"><br>
+    ID Biaya Pemasaran: <input type="number" name="id_biaya_pemasaran" value="{{ $iklan->id_biaya_pemasaran }}"><br>
+    ID Platform: <input type="number" name="id_platform" value="{{ $iklan->id_platform }}"><br>
     <button type="submit">Update</button>
 </form>
+
+<a href="{{ route('iklan.index') }}" style="display: inline-block; margin-top: 20px;">← Kembali ke daftar</a>
 @endsection

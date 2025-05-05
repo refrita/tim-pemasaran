@@ -3,7 +3,8 @@
 @section('title', 'Detail Platform')
 
 @section('content')
-<p>Nama Platform: {{ $item['nama_platform'] }}</p>
-<p>Jenis Platform: {{ $item['jenis_platform'] }}</p>
-<a href="/platform">Kembali</a>
+<p>Nama Platform: {{ $platform['nama_platform'] }}</p>
+<p>Jenis Platform: {{ $platform['jenis_platform'] }}</p>
+
+<a href="{{ route('home.index') }}" style="display: inline-block; margin-top: 20px;">← Kembali ke daftar</a>
 @endsection
