@@ -3,9 +3,14 @@
 @section('title', 'Detail Biaya Pemasaran')
 
 @section('content')
-<p>Total Anggaran: {{ number_format($item['total_anggaran']) }}</p>
-<p>Anggaran Tersedia: {{ number_format($item['anggaran_tersedia']) }}</p>
-<p>Bulan Berlaku: {{ $item['bulan_berlaku'] }}</p>
-<p>Status: {{ $item['status'] }}</p>
-<a href="/biaya-pemasaran">Kembali</a>
+<div class="card p-4 shadow-sm">
+    <h2 class="mb-4">Detail Biaya Pemasaran</h2>
+
+    <p><strong>Total Anggaran:</strong> {{ $biaya['total_anggaran'] }}</p>
+    <p><strong>Anggaran Tersedia:</strong> {{ $biaya['anggaran_tersedia'] }}</p>
+    <p><strong>Bulan Berlaku:</strong> {{ $biaya['bulan_berlaku'] }}</p>
+    <p><strong>Status:</strong> {{ $biaya['status'] }}</p>
+
+    <a href="{{ route('biaya-pemasaran.index') }}" class="btn btn-secondary mt-3">← Kembali ke daftar</a>
+</div>
 @endsection

@@ -9,7 +9,8 @@ class TimPemasaran extends Model
 {
     use HasFactory;
 
-    protected $table = 'TIM_PEMASARANS';
+    protected $table = 'tim_pemasarans'; // gunakan huruf kecil dan plural sesuai konvensi Laravel
+
     protected $fillable = [
         'id_biaya_pemasaran',
         'id_platform',
@@ -19,20 +20,17 @@ class TimPemasaran extends Model
         'kata_sandi',
     ];
 
-    protected $primaryKey = 'id';
-
-    public $incrementing = true;
-    protected $keyType = 'int';
-
     public $timestamps = false;
 
-    public static function getAll()
+    // Relasi ke BiayaPemasaran
+    public function biayaPemasaran()
     {
-        return self::all();
+        return $this->belongsTo(BiayaPemasaran::class, 'id_biaya_pemasaran');
     }
 
-    public static function find($id)
+    // Relasi ke Platform
+    public function platform()
     {
-        return self::where('id', $id)->first();
+        return $this->belongsTo(Platform::class, 'id_platform');
     }
 }

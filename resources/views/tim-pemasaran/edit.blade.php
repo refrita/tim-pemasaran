@@ -3,15 +3,44 @@
 @section('title', 'Edit Anggota Tim')
 
 @section('content')
-<form action="/tim-pemasaran/{{ $item['id'] }}" method="POST">
-    @csrf
-    @method('PUT')
-    Nama: <input type="text" name="nama_anggota" value="{{ $item['nama_anggota'] }}"><br>
-    Jabatan: <input type="text" name="jabatan" value="{{ $item['jabatan'] }}"><br>
-    Nama Pengguna: <input type="text" name="nama_pengguna" value="{{ $item['nama_pengguna'] }}"><br>
-    Kata Sandi: <input type="password" name="kata_sandi"><br>
-    ID Platform: <input type="number" name="id_platform" value="{{ $item['id_platform'] }}"><br>
-    ID Pemasaran: <input type="number" name="id_pemasaran" value="{{ $item['id_pemasaran'] }}"><br>
-    <button type="submit">Update</button>
-</form>
+<div class="container mt-4">
+    <h2 class="mb-4">Edit Anggota Tim</h2>
+
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+
+    <form method="POST" action="{{ route('tim-pemasaran.update', $tim->id) }}">
+        @csrf
+        @method('PUT')
+
+        <div class="mb-3">
+            <label class="form-label">Nama Anggota</label>
+            <input type="text" name="nama_anggota" value="{{ old('nama_anggota', $tim->nama_anggota) }}" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Jabatan</label>
+            <input type="text" name="jabatan_anggota" value="{{ old('jabatan_anggota', $tim->jabatan_anggota) }}" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Nama Pengguna</label>
+            <input type="text" name="nama_pengguna" value="{{ old('nama_pengguna', $tim->nama_pengguna) }}" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Kata Sandi</label>
+            <input type="password" name="kata_sandi" placeholder="Biarkan kosong jika tidak ingin mengubah" class="form-control">
+        </div>
+        <div class="mb-3">
+            <label class="form-label">ID Platform</label>
+            <input type="number" name="id_platform" value="{{ old('id_platform', $tim->id_platform) }}" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">ID Biaya Pemasaran</label>
+            <input type="number" name="id_biaya_pemasaran" value="{{ old('id_biaya_pemasaran', $tim->id_biaya_pemasaran) }}" class="form-control" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Update</button>
+        <a href="{{ route('tim-pemasaran.index') }}" class="btn btn-secondary ms-2">← Kembali</a>
+    </form>
+</div>
 @endsection

@@ -3,12 +3,16 @@
 @section('title', 'Detail Iklan')
 
 @section('content')
-<p>Nama Iklan: {{ $iklan->nama }}</p>
-<p>Kategori: {{ $iklan->kategori }}</p>
-<p>Tanggal Peluncuran: {{ $iklan->tanggal_peluncuran }}</p>
-<p>Tanggal Selesai: {{ $iklan->tanggal_selesai }}</p>
-<p>ID Biaya Pemasaran: {{ $iklan->id_biaya_pemasaran }}</p>
-<p>ID Platform: {{ $iklan->id_platform }}</p>
+<div class="card p-4 shadow-sm">
+    <h2 class="mb-4">Detail Iklan</h2>
 
-<a href="{{ route('iklan.index') }}" style="display: inline-block; margin-top: 20px;">← Kembali ke daftar</a>
+    <p><strong>Nama Iklan:</strong> {{ $iklan->nama }}</p>
+    <p><strong>Kategori:</strong> {{ $iklan->kategori }}</p>
+    <p><strong>Tanggal Peluncuran:</strong> {{ $iklan->tanggal_peluncuran }}</p>
+    <p><strong>Tanggal Selesai:</strong> {{ $iklan->tanggal_selesai }}</p>
+    <p><strong>ID Biaya Pemasaran:</strong> {{ $iklan->id_biaya_pemasaran }}</p>
+    <p><strong>ID Platform:</strong> {{ $iklan->id_platform }}</p>
+
+    <a href="{{ route('iklan.index') }}" class="btn btn-secondary mt-3">← Kembali ke daftar</a>
+</div>
 @endsection

@@ -27,11 +27,16 @@ class BiayaPemasaranController extends Controller
             'bulan_berlaku' => 'required|date',
             'status' => 'required|string|max:50',
         ]);
-
-        BiayaPemasaran::create($request->all());
-
+    
+        BiayaPemasaran::create([
+            'total_anggaran' => $request->input('total_anggaran'),
+            'anggaran_tersedia' => $request->input('anggaran_tersedia'),
+            'bulan_berlaku' => $request->input('bulan_berlaku'),
+            'status' => $request->input('status'),
+        ]);
+    
         return redirect()->route('biaya-pemasaran.index')->with('success', 'Data biaya berhasil disimpan');
-    }
+    }    
 
     public function show($id)
     {
@@ -55,10 +60,17 @@ class BiayaPemasaranController extends Controller
         ]);
 
         $biaya = BiayaPemasaran::findOrFail($id);
-        $biaya->update($request->all());
+
+        $biaya->update([
+            'total_anggaran' => $request->input('total_anggaran'),
+            'anggaran_tersedia' => $request->input('anggaran_tersedia'),
+            'bulan_berlaku' => $request->input('bulan_berlaku'),
+            'status' => $request->input('status'),
+        ]);
 
         return redirect()->route('biaya-pemasaran.show', $id)->with('success', 'Data biaya berhasil diperbarui');
     }
+  
 
     public function delete($id)
     {

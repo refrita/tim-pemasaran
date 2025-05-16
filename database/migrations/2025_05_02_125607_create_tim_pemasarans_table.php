@@ -10,12 +10,17 @@ return new class extends Migration
     {
         Schema::create('tim_pemasarans', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_biaya_pemasaran');
-            $table->integer('id_platform');
+            $table->unsignedBigInteger('id_biaya_pemasaran');
+            $table->unsignedBigInteger('id_platform');
             $table->string('nama_anggota', 100);
             $table->string('jabatan_anggota', 100);
             $table->string('nama_pengguna', 100);
             $table->string('kata_sandi', 100);
+            $table->timestamps();
+
+            // Foreign key constraints
+            $table->foreign('id_biaya_pemasaran')->references('id')->on('biaya_pemasarans')->onDelete('cascade');
+            $table->foreign('id_platform')->references('id')->on('platforms')->onDelete('cascade');
         });
     }
 

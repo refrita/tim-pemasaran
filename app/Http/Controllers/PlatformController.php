@@ -62,8 +62,8 @@ class PlatformController extends Controller
         $platform = Platform::findOrFail($id);
 
         $platform->update([
-            'nama_platform' => $request->input('nama_platform'),
-            'jenis_platform' => $request->input('jenis_platform'),
+            'nama' => $request->input('nama_platform'),
+            'jenis' => $request->input('jenis_platform'),
         ]);
 
         return redirect()->route('platform.show', $id)->with('success', 'Data platform berhasil diperbarui');

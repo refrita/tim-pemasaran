@@ -10,12 +10,16 @@ return new class extends Migration
     {
         Schema::create('iklans', function (Blueprint $table) {
             $table->id();
-            $table->integer('id_biaya_pemasaran');
-            $table->integer('id_platform');
+            $table->unsignedBigInteger('id_biaya_pemasaran');
+            $table->unsignedBigInteger('id_platform');
             $table->string('nama', 50);
             $table->string('kategori', 100);
             $table->date('tanggal_peluncuran');
             $table->date('tanggal_selesai');
+            $table->timestamps();
+
+            $table->foreign('id_biaya_pemasaran')->references('id')->on('biaya_pemasarans')->onDelete('cascade');
+            $table->foreign('id_platform')->references('id')->on('platforms')->onDelete('cascade');
         });
     }
 

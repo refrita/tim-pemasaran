@@ -9,7 +9,7 @@ class Iklan extends Model
 {
     use HasFactory;
 
-    protected $table = 'IKLANS'; // sesuaikan jika tabel pakai plural
+    protected $table = 'iklans'; // gunakan huruf kecil dan plural sesuai konvensi Laravel
 
     protected $fillable = [
         'id_biaya_pemasaran',
@@ -20,19 +20,17 @@ class Iklan extends Model
         'tanggal_selesai',
     ];
 
-    protected $primaryKey = 'id';
-    public $incrementing = true;
-    protected $keyType = 'int';
     public $timestamps = false;
 
-    // Method tambahan
-    public static function getAll()
+    // Relasi ke BiayaPemasaran
+    public function biayaPemasaran()
     {
-        return self::all();
+        return $this->belongsTo(BiayaPemasaran::class, 'id_biaya_pemasaran');
     }
 
-    public static function find($id)
+    // Relasi ke Platform
+    public function platform()
     {
-        return self::where('id', $id)->first();
+        return $this->belongsTo(Platform::class, 'id_platform');
     }
 }

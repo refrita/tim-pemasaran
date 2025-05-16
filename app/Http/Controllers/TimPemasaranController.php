@@ -9,9 +9,8 @@ class TimPemasaranController extends Controller
 {
     public function index()
     {
-        return view('tim-pemasaran.index', [
-            'tim' => TimPemasaran::all()
-        ]);
+        $tim = TimPemasaran::all();
+        return view('tim-pemasaran.index', compact('tim'));
     }
 
     public function create()
@@ -22,17 +21,24 @@ class TimPemasaranController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'id_biaya_pemasaran' => 'required|integer',
-            'id_platform' => 'required|integer',
+            'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
+            'id_platform' => 'required|exists:platforms,id',
             'nama_anggota' => 'required|string|max:100',
             'jabatan_anggota' => 'required|string|max:100',
             'nama_pengguna' => 'required|string|max:100',
             'kata_sandi' => 'required|string|max:100',
         ]);
 
-        TimPemasaran::create($request->all());
+        TimPemasaran::create([
+            'id_biaya_pemasaran' => $request->input('id_biaya_pemasaran'),
+            'id_platform' => $request->input('id_platform'),
+            'nama_anggota' => $request->input('nama_anggota'),
+            'jabatan_anggota' => $request->input('jabatan_anggota'),
+            'nama_pengguna' => $request->input('nama_pengguna'),
+            'kata_sandi' => $request->input('kata_sandi'),
+        ]);
 
-        return redirect()->route('tim-pemasaran.index')->with('success', 'Data tim berhasil disimpan');
+        return redirect()->route('tim-pemasaran.index');
     }
 
     public function show($id)
@@ -50,18 +56,31 @@ class TimPemasaranController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'id_biaya_pemasaran' => 'required|integer',
-            'id_platform' => 'required|integer',
+            'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
+            'id_platform' => 'required|exists:platforms,id',
             'nama_anggota' => 'required|string|max:100',
             'jabatan_anggota' => 'required|string|max:100',
             'nama_pengguna' => 'required|string|max:100',
-            'kata_sandi' => 'required|string|max:100',
+            'kata_sandi' => 'nullable|string|max:100',
         ]);
 
         $tim = TimPemasaran::findOrFail($id);
-        $tim->update($request->all());
 
-        return redirect()->route('tim-pemasaran.show', $id)->with('success', 'Data tim berhasil diperbarui');
+        $data = [
+            'id_biaya_pemasaran' => $request->input('id_biaya_pemasaran'),
+            'id_platform' => $request->input('id_platform'),
+            'nama_anggota' => $request->input('nama_anggota'),
+            'jabatan_anggota' => $request->input('jabatan_anggota'),
+            'nama_pengguna' => $request->input('nama_pengguna'),
+        ];
+
+        if (!empty($request->input('kata_sandi'))) {
+            $data['kata_sandi'] = $request->input('kata_sandi');
+        }
+
+        $tim->update($data);
+
+        return redirect()->route('tim-pemasaran.show', $id);
     }
 
     public function delete($id)
@@ -75,6 +94,6 @@ class TimPemasaranController extends Controller
         $tim = TimPemasaran::findOrFail($id);
         $tim->delete();
 
-        return redirect()->route('tim-pemasaran.index')->with('success', 'Data tim berhasil dihapus');
+        return redirect()->route('tim-pemasaran.index');
     }
 }

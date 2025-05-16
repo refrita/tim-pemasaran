@@ -7,21 +7,17 @@ use App\Models\Performa;
 
 class PerformaController extends Controller
 {
-    // Menampilkan daftar semua performa
     public function index()
     {
-        return view('performa.index', [
-            'performa' => Performa::all()
-        ]);
+        $performa = Performa::all();
+        return view('performa.index', compact('performa'));
     }
 
-    // Menampilkan form tambah performa
     public function create()
     {
         return view('performa.create');
     }
 
-    // Menyimpan data performa baru
     public function store(Request $request)
     {
         $request->validate([
@@ -29,33 +25,32 @@ class PerformaController extends Controller
             'jumlah_klik' => 'required|integer',
             'konversi' => 'required|numeric',
             'tanggal' => 'required|date',
+            'id_platform' => 'required|exists:platforms,id',
         ]);
 
         Performa::create([
-            'jumlah_tayang' => $request->jumlah_tayang,
-            'jumlah_klik' => $request->jumlah_klik,
-            'konversi' => $request->konversi,
-            'tanggal' => $request->tanggal,
+            'jumlah_tayang' => $request->input('jumlah_tayang'),
+            'jumlah_klik' => $request->input('jumlah_klik'),
+            'konversi' => $request->input('konversi'),
+            'tanggal' => $request->input('tanggal'),
+            'id_platform' => $request->input('id_platform'),
         ]);
-                
-        return redirect()->route('performa.index')->with('success', 'Data performa berhasil disimpan');
+
+        return redirect()->route('performa.index');
     }
 
-        // Menampilkan detail performa
     public function show($id)
     {
         $performa = Performa::findOrFail($id);
         return view('performa.show', compact('performa'));
     }
 
-    // Menampilkan form edit performa
     public function edit($id)
     {
         $performa = Performa::findOrFail($id);
         return view('performa.edit', compact('performa'));
     }
 
-    // Memproses update data performa
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -63,6 +58,7 @@ class PerformaController extends Controller
             'jumlah_klik' => 'required|integer',
             'konversi' => 'required|numeric',
             'tanggal' => 'required|date',
+            'id_platform' => 'required|exists:platforms,id',
         ]);
 
         $performa = Performa::findOrFail($id);
@@ -72,24 +68,23 @@ class PerformaController extends Controller
             'jumlah_klik' => $request->input('jumlah_klik'),
             'konversi' => $request->input('konversi'),
             'tanggal' => $request->input('tanggal'),
+            'id_platform' => $request->input('id_platform'),
         ]);
 
-        return redirect()->route('performa.show', $id)->with('success', 'Data performa berhasil diperbarui');
+        return redirect()->route('performa.show', $id);
     }
 
-    // Menampilkan halaman konfirmasi hapus
     public function delete($id)
     {
         $performa = Performa::findOrFail($id);
         return view('performa.delete', compact('performa'));
     }
 
-    // Menghapus data performa
     public function destroy($id)
     {
         $performa = Performa::findOrFail($id);
         $performa->delete();
 
-        return redirect()->route('performa.index')->with('success', 'Data performa berhasil dihapus');
+        return redirect()->route('performa.index');
     }
 }
