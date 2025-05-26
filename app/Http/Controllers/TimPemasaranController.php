@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\TimPemasaran;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class TimPemasaranController extends Controller
 {
@@ -20,25 +21,28 @@ class TimPemasaranController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $rules = [
             'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
-            'id_platform' => 'required|exists:platforms,id',
-            'nama_anggota' => 'required|string|max:100',
-            'jabatan_anggota' => 'required|string|max:100',
-            'nama_pengguna' => 'required|string|max:100',
-            'kata_sandi' => 'required|string|max:100',
-        ]);
+            'id_platform'        => 'required|exists:platforms,id',
+            'nama_anggota'       => 'required|string|max:100',
+            'jabatan_anggota'    => 'required|string|max:100',
+            'nama_pengguna'      => 'required|string|max:100',
+            'kata_sandi'         => 'required|string|max:100',
+        ];
 
-        TimPemasaran::create([
-            'id_biaya_pemasaran' => $request->input('id_biaya_pemasaran'),
-            'id_platform' => $request->input('id_platform'),
-            'nama_anggota' => $request->input('nama_anggota'),
-            'jabatan_anggota' => $request->input('jabatan_anggota'),
-            'nama_pengguna' => $request->input('nama_pengguna'),
-            'kata_sandi' => $request->input('kata_sandi'),
-        ]);
+        $validator = Validator::make($request->all(), $rules);
 
-        return redirect()->route('tim-pemasaran.index');
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Data tim pemasaran tidak berhasil disimpan, data tidak valid:')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        TimPemasaran::create($validator->validated());
+
+        return redirect()->route('tim-pemasaran.index')
+            ->with('success', 'Data tim pemasaran berhasil disimpan.');
     }
 
     public function show($id)
@@ -55,32 +59,36 @@ class TimPemasaranController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $rules = [
             'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
-            'id_platform' => 'required|exists:platforms,id',
-            'nama_anggota' => 'required|string|max:100',
-            'jabatan_anggota' => 'required|string|max:100',
-            'nama_pengguna' => 'required|string|max:100',
-            'kata_sandi' => 'nullable|string|max:100',
-        ]);
-
-        $tim = TimPemasaran::findOrFail($id);
-
-        $data = [
-            'id_biaya_pemasaran' => $request->input('id_biaya_pemasaran'),
-            'id_platform' => $request->input('id_platform'),
-            'nama_anggota' => $request->input('nama_anggota'),
-            'jabatan_anggota' => $request->input('jabatan_anggota'),
-            'nama_pengguna' => $request->input('nama_pengguna'),
+            'id_platform'        => 'required|exists:platforms,id',
+            'nama_anggota'       => 'required|string|max:100',
+            'jabatan_anggota'    => 'required|string|max:100',
+            'nama_pengguna'      => 'required|string|max:100',
+            'kata_sandi'         => 'nullable|string|max:100',
         ];
 
-        if (!empty($request->input('kata_sandi'))) {
-            $data['kata_sandi'] = $request->input('kata_sandi');
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Data tim pemasaran tidak berhasil diperbarui, data tidak valid:')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $tim  = TimPemasaran::findOrFail($id);
+        $data = $validator->validated();
+
+        // Jika kata_sandi dikosongkan, biarkan password lama
+        if (empty($data['kata_sandi'])) {
+            unset($data['kata_sandi']);
         }
 
         $tim->update($data);
 
-        return redirect()->route('tim-pemasaran.show', $id);
+        return redirect()->route('tim-pemasaran.index', $id)
+            ->with('success', 'Data tim pemasaran berhasil diperbarui.');
     }
 
     public function delete($id)
@@ -94,6 +102,7 @@ class TimPemasaranController extends Controller
         $tim = TimPemasaran::findOrFail($id);
         $tim->delete();
 
-        return redirect()->route('tim-pemasaran.index');
+        return redirect()->route('tim-pemasaran.index')
+            ->with('success', 'Data tim pemasaran berhasil dihapus.');
     }
 }

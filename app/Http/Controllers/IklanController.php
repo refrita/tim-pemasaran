@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Iklan;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class IklanController extends Controller
 {
@@ -21,25 +22,31 @@ class IklanController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $rules = [
             'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
-            'id_platform' => 'required|exists:platforms,id',
-            'nama' => 'required|string|max:50',
-            'kategori' => 'required|string|max:100',
+            'id_platform'        => 'required|exists:platforms,id',
+            'nama'               => 'required|string|max:50',
+            'kategori'           => 'required|string|max:100',
             'tanggal_peluncuran' => 'required|date',
-            'tanggal_selesai' => 'required|date',
-        ]);
+            'tanggal_selesai'    => 'required|date|after_or_equal:tanggal_peluncuran',
+        ];
+        $messages = [
+            'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal peluncuran.',
+        ];
 
-        Iklan::create([
-            'id_biaya_pemasaran' => $request->input('id_biaya_pemasaran'),
-            'id_platform' => $request->input('id_platform'),
-            'nama' => $request->input('nama'),
-            'kategori' => $request->input('kategori'),
-            'tanggal_peluncuran' => $request->input('tanggal_peluncuran'),
-            'tanggal_selesai' => $request->input('tanggal_selesai'),
-        ]);
+        $validator = Validator::make($request->all(), $rules, $messages);
 
-        return redirect()->route('iklan.index');
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Data iklan tidak berhasil disimpan, data tidak valid:')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        Iklan::create($validator->validated());
+
+        return redirect()->route('iklan.index')
+            ->with('success', 'Data iklan berhasil disimpan.');
     }
 
     public function show($id)
@@ -56,27 +63,32 @@ class IklanController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
+        $rules = [
             'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
-            'id_platform' => 'required|exists:platforms,id',
-            'nama' => 'required|string|max:50',
-            'kategori' => 'required|string|max:100',
+            'id_platform'        => 'required|exists:platforms,id',
+            'nama'               => 'required|string|max:50',
+            'kategori'           => 'required|string|max:100',
             'tanggal_peluncuran' => 'required|date',
-            'tanggal_selesai' => 'required|date',
-        ]);
+            'tanggal_selesai'    => 'required|date|after_or_equal:tanggal_peluncuran',
+        ];
+        $messages = [
+            'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal peluncuran.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Data iklan tidak berhasil diperbarui, data tidak valid:')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $iklan = Iklan::findOrFail($id);
+        $iklan->update($validator->validated());
 
-        $iklan->update([
-            'id_biaya_pemasaran' => $request->input('id_biaya_pemasaran'),
-            'id_platform' => $request->input('id_platform'),
-            'nama' => $request->input('nama'),
-            'kategori' => $request->input('kategori'),
-            'tanggal_peluncuran' => $request->input('tanggal_peluncuran'),
-            'tanggal_selesai' => $request->input('tanggal_selesai'),
-        ]);
-
-        return redirect()->route('iklan.show', $id);
+        return redirect()->route('iklan.index', $id)
+            ->with('success', 'Data iklan berhasil diperbarui.');
     }
 
     public function delete($id)
@@ -90,6 +102,7 @@ class IklanController extends Controller
         $iklan = Iklan::findOrFail($id);
         $iklan->delete();
 
-        return redirect()->route('iklan.index');
+        return redirect()->route('iklan.index')
+            ->with('success', 'Data iklan berhasil dihapus.');
     }
 }

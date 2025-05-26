@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\BiayaPemasaran;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
 
 class BiayaPemasaranController extends Controller
 {
     public function index()
     {
-        return view('biaya-pemasaran.index', [
-            'biaya' => BiayaPemasaran::all()
-        ]);
+        $biaya = BiayaPemasaran::all();
+        return view('biaya-pemasaran.index', compact('biaya'));
     }
 
     public function create()
@@ -21,22 +22,33 @@ class BiayaPemasaranController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'total_anggaran' => 'required|integer',
-            'anggaran_tersedia' => 'required|integer',
-            'bulan_berlaku' => 'required|date',
-            'status' => 'required|string|max:50',
-        ]);
-    
-        BiayaPemasaran::create([
-            'total_anggaran' => $request->input('total_anggaran'),
-            'anggaran_tersedia' => $request->input('anggaran_tersedia'),
-            'bulan_berlaku' => $request->input('bulan_berlaku'),
-            'status' => $request->input('status'),
-        ]);
-    
-        return redirect()->route('biaya-pemasaran.index')->with('success', 'Data biaya berhasil disimpan');
-    }    
+        // rules & custom messages (jika perlu)
+        $rules = [
+            'total_anggaran'   => 'required|integer|min:0',
+            'anggaran_tersedia'=> 'required|integer|min:0',
+            'bulan_berlaku'    => 'required|date',
+            'status'           => 'required|string|max:50',
+        ];
+        $messages = [
+            // contoh custom message:
+            'bulan_berlaku.date' => 'Format tanggal bulan berlaku tidak valid.',
+        ];
+
+        // buat validator manual
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Data biaya tidak berhasil disimpan, data tidak valid:')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        BiayaPemasaran::create($validator->validated());
+
+        return redirect()->route('biaya-pemasaran.index')
+            ->with('success', 'Data biaya berhasil disimpan.');
+    }
 
     public function show($id)
     {
@@ -52,25 +64,31 @@ class BiayaPemasaranController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'total_anggaran' => 'required|integer',
-            'anggaran_tersedia' => 'required|integer',
-            'bulan_berlaku' => 'required|date',
-            'status' => 'required|string|max:50',
-        ]);
+        $rules = [
+            'total_anggaran'   => 'required|integer|min:0',
+            'anggaran_tersedia'=> 'required|integer|min:0',
+            'bulan_berlaku'    => 'required|date',
+            'status'           => 'required|string|max:50',
+        ];
+        $messages = [
+            'bulan_berlaku.date' => 'Format tanggal bulan berlaku tidak valid.',
+        ];
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Data biaya tidak berhasil diperbarui, data tidak valid:')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $biaya = BiayaPemasaran::findOrFail($id);
+        $biaya->update($validator->validated());
 
-        $biaya->update([
-            'total_anggaran' => $request->input('total_anggaran'),
-            'anggaran_tersedia' => $request->input('anggaran_tersedia'),
-            'bulan_berlaku' => $request->input('bulan_berlaku'),
-            'status' => $request->input('status'),
-        ]);
-
-        return redirect()->route('biaya-pemasaran.show', $id)->with('success', 'Data biaya berhasil diperbarui');
+        return redirect()->route('biaya-pemasaran.index')
+            ->with('success', 'Data biaya berhasil diperbarui.');
     }
-  
 
     public function delete($id)
     {
@@ -83,6 +101,7 @@ class BiayaPemasaranController extends Controller
         $biaya = BiayaPemasaran::findOrFail($id);
         $biaya->delete();
 
-        return redirect()->route('biaya-pemasaran.index')->with('success', 'Data biaya berhasil dihapus');
+        return redirect()->route('biaya-pemasaran.index')
+            ->with('success', 'Data biaya berhasil dihapus.');
     }
 }

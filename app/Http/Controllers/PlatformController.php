@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Platform;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PlatformController extends Controller
 {
-    // Menampilkan daftar semua platform
     public function index()
     {
         return view('platform.index', [
@@ -15,73 +15,88 @@ class PlatformController extends Controller
         ]);
     }
 
-    // Menampilkan form tambah platform
     public function create()
     {
         return view('platform.create');
     }
 
-    // Menyimpan data platform baru
     public function store(Request $request)
     {
-        $request->validate([
-            'nama_platform' => 'required|string|max:255',
+        $rules = [
+            'nama_platform'  => 'required|string|max:255',
             'jenis_platform' => 'required|string|max:255',
-        ]);
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Data platform tidak berhasil disimpan, data tidak valid:')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         Platform::create([
-            'nama' => $request->input('nama_platform'),
-            'jenis' => $request->input('jenis_platform'),
-        ]);        
+            'nama'  => $validator->validated()['nama_platform'],
+            'jenis' => $validator->validated()['jenis_platform'],
+        ]);
 
-        return redirect()->route('platform.index')->with('success', 'Data platform berhasil disimpan');
+        return redirect()->route('platform.index')
+            ->with('success', 'Data platform berhasil disimpan.');
     }
 
-    // Menampilkan detail platform
     public function show($id)
     {
         $platform = Platform::findOrFail($id);
         return view('platform.show', compact('platform'));
     }
 
-    // Menampilkan form edit platform
     public function edit($id)
     {
         $platform = Platform::findOrFail($id);
         return view('platform.edit', compact('platform'));
     }
 
-    // Memproses update data platform
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'nama_platform' => 'required|string|max:255',
+        $rules = [
+            'nama_platform'  => 'required|string|max:255',
             'jenis_platform' => 'required|string|max:255',
-        ]);
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Data platform tidak berhasil diperbarui, data tidak valid:')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $platform = Platform::findOrFail($id);
+        $data      = $validator->validated();
 
         $platform->update([
-            'nama' => $request->input('nama_platform'),
-            'jenis' => $request->input('jenis_platform'),
+            'nama'  => $data['nama_platform'],
+            'jenis' => $data['jenis_platform'],
         ]);
 
-        return redirect()->route('platform.show', $id)->with('success', 'Data platform berhasil diperbarui');
+        return redirect()->route('platform.index', $id)
+            ->with('success', 'Data platform berhasil diperbarui.');
     }
 
-    // Menampilkan halaman konfirmasi hapus
     public function delete($id)
     {
         $platform = Platform::findOrFail($id);
         return view('platform.delete', compact('platform'));
     }
 
-    // Menghapus data platform
     public function destroy($id)
     {
         $platform = Platform::findOrFail($id);
         $platform->delete();
 
-        return redirect()->route('platform.index')->with('success', 'Data platform berhasil dihapus');
+        return redirect()->route('platform.index')
+            ->with('success', 'Data platform berhasil dihapus.');
     }
 }

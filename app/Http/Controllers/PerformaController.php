@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Performa;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PerformaController extends Controller
 {
@@ -20,23 +21,27 @@ class PerformaController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'jumlah_tayang' => 'required|integer',
-            'jumlah_klik' => 'required|integer',
-            'konversi' => 'required|numeric',
-            'tanggal' => 'required|date',
-            'id_platform' => 'required|exists:platforms,id',
-        ]);
+        $rules = [
+            'jumlah_tayang' => 'required|integer|min:0',
+            'jumlah_klik'   => 'required|integer|min:0',
+            'konversi'      => 'required|numeric|min:0',
+            'tanggal'       => 'required|date',
+            'id_platform'   => 'required|exists:platforms,id',
+        ];
 
-        Performa::create([
-            'jumlah_tayang' => $request->input('jumlah_tayang'),
-            'jumlah_klik' => $request->input('jumlah_klik'),
-            'konversi' => $request->input('konversi'),
-            'tanggal' => $request->input('tanggal'),
-            'id_platform' => $request->input('id_platform'),
-        ]);
+        $validator = Validator::make($request->all(), $rules);
 
-        return redirect()->route('performa.index');
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Data performa tidak berhasil disimpan, data tidak valid:')
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        Performa::create($validator->validated());
+
+        return redirect()->route('performa.index')
+            ->with('success', 'Data performa berhasil disimpan.');
     }
 
     public function show($id)
@@ -53,25 +58,28 @@ class PerformaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'jumlah_tayang' => 'required|integer',
-            'jumlah_klik' => 'required|integer',
-            'konversi' => 'required|numeric',
-            'tanggal' => 'required|date',
-            'id_platform' => 'required|exists:platforms,id',
-        ]);
+        $rules = [
+            'jumlah_tayang' => 'required|integer|min:0',
+            'jumlah_klik'   => 'required|integer|min:0',
+            'konversi'      => 'required|numeric|min:0',
+            'tanggal'       => 'required|date',
+            'id_platform'   => 'required|exists:platforms,id',
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->with('error', 'Data performa tidak berhasil diperbarui, data tidak valid:')
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $performa = Performa::findOrFail($id);
+        $performa->update($validator->validated());
 
-        $performa->update([
-            'jumlah_tayang' => $request->input('jumlah_tayang'),
-            'jumlah_klik' => $request->input('jumlah_klik'),
-            'konversi' => $request->input('konversi'),
-            'tanggal' => $request->input('tanggal'),
-            'id_platform' => $request->input('id_platform'),
-        ]);
-
-        return redirect()->route('performa.show', $id);
+        return redirect()->route('performa.index', $id)
+            ->with('success', 'Data performa berhasil diperbarui.');
     }
 
     public function delete($id)
@@ -85,6 +93,7 @@ class PerformaController extends Controller
         $performa = Performa::findOrFail($id);
         $performa->delete();
 
-        return redirect()->route('performa.index');
+        return redirect()->route('performa.index')
+            ->with('success', 'Data performa berhasil dihapus.');
     }
 }
