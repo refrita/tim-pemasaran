@@ -6,18 +6,54 @@
 <div class="container mt-4">
     <h2 class="mb-4">Edit Platform</h2>
 
+    {{-- Flash messages --}}
+    @if(session('success'))
+        <div class="alert alert-success">{{ session('success') }}</div>
+    @endif
+    @if(session('error'))
+        <div class="alert alert-danger">
+            <strong>{{ session('error') }}</strong>
+            @if($errors->any())
+                <ul class="mb-0">
+                    @foreach($errors->all() as $err)
+                        <li>{{ $err }}</li>
+                    @endforeach
+                </ul>
+            @endif
+        </div>
+    @endif
+
     <form action="{{ route('platform.update', $platform->id) }}" method="POST">
         @csrf
         @method('PUT')
+
         <div class="mb-3">
             <label class="form-label">Nama Platform</label>
-            <input type="text" name="nama_platform" value="{{ $platform->nama }}" class="form-control" required>
+            <input
+                type="text"
+                name="nama_platform"
+                value="{{ old('nama_platform', $platform->nama) }}"
+                class="form-control @error('nama_platform') is-invalid @enderror"
+            >
+            @error('nama_platform')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
+
         <div class="mb-3">
             <label class="form-label">Jenis Platform</label>
-            <input type="text" name="jenis_platform" value="{{ $platform->jenis }}" class="form-control" required>
+            <input
+                type="text"
+                name="jenis_platform"
+                value="{{ old('jenis_platform', $platform->jenis) }}"
+                class="form-control @error('jenis_platform') is-invalid @enderror"
+            >
+            @error('jenis_platform')
+                <div class="invalid-feedback">{{ $message }}</div>
+            @enderror
         </div>
-        <button type="submit" class="btn btn-primary">Update</button>
+
+        <button type="submit" class="btn btn-success">Update</button>
         <a href="{{ route('platform.index') }}" class="btn btn-secondary ms-2">← Kembali ke daftar</a>
     </form>
 </div>
