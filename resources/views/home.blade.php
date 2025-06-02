@@ -89,32 +89,45 @@
             </div>
         </div>
     </div>
-    
-    <!-- Quick Stats Section -->
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-secondary text-white">
-                    <h5 class="mb-0">Statistik Cepat</h5>
-                </div>
-                <div class="card-body">
-                    <div class="row text-center">
-                        <div class="col-md-3">
-                            <h4>2</h4>
-                            <p class="text-muted">Anggota Tim</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h4>2</h4>
-                            <p class="text-muted">Platform</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h4>2</h4>
-                            <p class="text-muted">Iklan Aktif</p>
-                        </div>
-                        <div class="col-md-3">
-                            <h4>2</h4>
-                            <p class="text-muted">Data Performa</p>
-                        </div>
+
+    <div class="container mt-4">
+    <form action="{{ route('home.index') }}" method="GET" class="row g-3">
+        <div class="col-md-10">
+            <input type="text" name="keyword" class="form-control" placeholder="Cari anggota tim, platform, iklan, atau performa..." value="{{ request('keyword') }}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Cari</button>
+        </div>
+    </form>
+    </div>
+<!-- Quick Stats Section --> 
+<div class="row mt-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header bg-secondary text-white">
+                <h5 class="mb-0">Statistik Cepat</h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-2">
+                        <h4>{{ $timCount }}</h4>
+                        <p class="text-muted">Anggota Tim</p>
+                    </div>
+                    <div class="col-md-2">
+                        <h4>{{ $platformCount }}</h4>
+                        <p class="text-muted">Platform</p>
+                    </div>
+                    <div class="col-md-2">
+                        <h4>{{ $iklanCount }}</h4>
+                        <p class="text-muted">Iklan Aktif</p>
+                    </div>
+                    <div class="col-md-2">
+                        <h4>{{ $performaCount }}</h4>
+                        <p class="text-muted">Data Performa</p>
+                    </div>
+                    <div class="col-md-2">
+                        <h4>{{ $biayaCount }}</h4>
+                        <p class="text-muted">Biaya Pemasaran</p>
                     </div>
                 </div>
             </div>
