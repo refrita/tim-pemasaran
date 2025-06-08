@@ -87,6 +87,10 @@ Route::get('/', function () {
     ));
 })->name('home.index');
 
+Route::get('/pendaftaran-anggotatim', function () {
+    return 'Selamat datang di halaman Pendaftaran Akun Anggota Tim Pemasaran';
+})->middleware('check.age');
+
 // Tim Pemasaran
 use App\Http\Controllers\TimPemasaranController;
 Route::get('/tim-pemasaran', [TimPemasaranController::class, 'index'])->name('tim-pemasaran.index');
