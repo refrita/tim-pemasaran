@@ -145,3 +145,8 @@ Route::get('/iklan/{id}/edit', [IklanController::class, 'edit'])->name('iklan.ed
 Route::put('/iklan/{id}', [IklanController::class, 'update'])->name('iklan.update');
 Route::get('/iklan/{id}/delete', [IklanController::class, 'delete'])->name('iklan.delete');
 Route::delete('/iklan/{id}', [IklanController::class, 'destroy'])->name('iklan.destroy');
+
+use App\Http\Controllers\ImageController;
+Route::get('/upload', [ImageController::class, 'create']);
+Route::post('/upload', [ImageController::class, 'store'])->name('image.upload');
+Route::delete('/upload/{id}', [ImageController::class, 'destroy'])->name('image.destroy');
