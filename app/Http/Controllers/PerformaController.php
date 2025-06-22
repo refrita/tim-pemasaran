@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Performa;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PerformaController extends Controller
 {
@@ -95,5 +96,32 @@ class PerformaController extends Controller
 
         return redirect()->route('performa.index')
             ->with('success', 'Data performa berhasil dihapus.');
+    }
+
+    // ✅ Tambahan untuk tugas Pertemuan 13:
+
+    // a. findOrFail biasa
+    public function showErrorA($id)
+    {
+        $performa = Performa::findOrFail($id);
+        return view('performa.show', compact('performa'));
+    }
+
+    // b. try-catch
+    public function showErrorB($id)
+    {
+        try {
+            $performa = Performa::findOrFail($id);
+            return view('performa.show', compact('performa'));
+        } catch (ModelNotFoundException $e) {
+            return response()->view('errors.custom_not_found', [], 404);
+        }
+    }
+
+    // c. firstOrFail berdasarkan konversi (contoh penggunaan query)
+    public function searchByKonversi($konversi)
+    {
+        $performa = Performa::where('konversi', $konversi)->firstOrFail();
+        return view('performa.show', compact('performa'));
     }
 }

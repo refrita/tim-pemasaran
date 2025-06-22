@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TimPemasaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TimPemasaranController extends Controller
 {
@@ -80,7 +81,6 @@ class TimPemasaranController extends Controller
         $tim  = TimPemasaran::findOrFail($id);
         $data = $validator->validated();
 
-        // Jika kata_sandi dikosongkan, biarkan password lama
         if (empty($data['kata_sandi'])) {
             unset($data['kata_sandi']);
         }
@@ -105,4 +105,31 @@ class TimPemasaranController extends Controller
         return redirect()->route('tim-pemasaran.index')
             ->with('success', 'Data tim pemasaran berhasil dihapus.');
     }
+
+    // ✅ Tambahan untuk tugas Pertemuan 13:
+
+    // a. Error handler pakai findOrFail biasa
+    public function showErrorA($id)
+    {
+        $tim = TimPemasaran::findOrFail($id);
+        return view('tim-pemasaran.show', compact('tim'));
+    }
+
+    // b. Error handler pakai try-catch
+    public function showErrorB($id)
+    {
+        try {
+            $tim = TimPemasaran::findOrFail($id);
+            return view('tim-pemasaran.show', compact('tim'));
+        } catch (ModelNotFoundException $e) {
+            return response()->view('errors.custom_not_found', [], 404);
+        }
+    }
+
+    public function searchByNama($nama)
+    {
+        $tim = TimPemasaran::where('nama_anggota', $nama)->firstOrFail();
+        return view('tim-pemasaran.show', compact('tim'));
+    }
+
 }

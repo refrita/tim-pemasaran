@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Platform;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class PlatformController extends Controller
 {
@@ -74,7 +75,7 @@ class PlatformController extends Controller
         }
 
         $platform = Platform::findOrFail($id);
-        $data      = $validator->validated();
+        $data = $validator->validated();
 
         $platform->update([
             'nama'  => $data['nama_platform'],
@@ -98,5 +99,32 @@ class PlatformController extends Controller
 
         return redirect()->route('platform.index')
             ->with('success', 'Data platform berhasil dihapus.');
+    }
+
+    // ✅ Tambahan untuk tugas Pertemuan 13:
+
+    // a. findOrFail biasa
+    public function showErrorA($id)
+    {
+        $platform = Platform::findOrFail($id);
+        return view('platform.show', compact('platform'));
+    }
+
+    // b. try-catch (error handler manual)
+    public function showErrorB($id)
+    {
+        try {
+            $platform = Platform::findOrFail($id);
+            return view('platform.show', compact('platform'));
+        } catch (ModelNotFoundException $e) {
+            return response()->view('errors.custom_not_found', [], 404);
+        }
+    }
+
+    // c. firstOrFail (berdasarkan nama platform)
+    public function searchByNama($nama)
+    {
+        $platform = Platform::where('nama', $nama)->firstOrFail();
+        return view('platform.show', compact('platform'));
     }
 }

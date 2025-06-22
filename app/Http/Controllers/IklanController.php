@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Iklan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class IklanController extends Controller
 {
@@ -104,5 +105,32 @@ class IklanController extends Controller
 
         return redirect()->route('iklan.index')
             ->with('success', 'Data iklan berhasil dihapus.');
+    }
+
+    // ✅ Tambahan untuk tugas Pertemuan 13:
+
+    // a. findOrFail biasa (404 otomatis)
+    public function showErrorA($id)
+    {
+        $iklan = Iklan::findOrFail($id);
+        return view('iklan.show', compact('iklan'));
+    }
+
+    // b. try-catch (menangani error secara manual)
+    public function showErrorB($id)
+    {
+        try {
+            $iklan = Iklan::findOrFail($id);
+            return view('iklan.show', compact('iklan'));
+        } catch (ModelNotFoundException $e) {
+            return response()->view('errors.custom_not_found', [], 404);
+        }
+    }
+
+    // c. firstOrFail (cari berdasarkan nama iklan)
+    public function searchByNama($nama)
+    {
+        $iklan = Iklan::where('nama', $nama)->firstOrFail();
+        return view('iklan.show', compact('iklan'));
     }
 }

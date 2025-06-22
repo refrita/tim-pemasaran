@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\BiayaPemasaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class BiayaPemasaranController extends Controller
 {
@@ -22,19 +22,16 @@ class BiayaPemasaranController extends Controller
 
     public function store(Request $request)
     {
-        // rules & custom messages (jika perlu)
         $rules = [
-            'total_anggaran'   => 'required|integer|min:0',
-            'anggaran_tersedia'=> 'required|integer|min:0',
-            'bulan_berlaku'    => 'required|date',
-            'status'           => 'required|string|max:50',
+            'total_anggaran'    => 'required|integer|min:0',
+            'anggaran_tersedia' => 'required|integer|min:0',
+            'bulan_berlaku'     => 'required|date',
+            'status'            => 'required|string|max:50',
         ];
         $messages = [
-            // contoh custom message:
             'bulan_berlaku.date' => 'Format tanggal bulan berlaku tidak valid.',
         ];
 
-        // buat validator manual
         $validator = Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
@@ -65,10 +62,10 @@ class BiayaPemasaranController extends Controller
     public function update(Request $request, $id)
     {
         $rules = [
-            'total_anggaran'   => 'required|integer|min:0',
-            'anggaran_tersedia'=> 'required|integer|min:0',
-            'bulan_berlaku'    => 'required|date',
-            'status'           => 'required|string|max:50',
+            'total_anggaran'    => 'required|integer|min:0',
+            'anggaran_tersedia' => 'required|integer|min:0',
+            'bulan_berlaku'     => 'required|date',
+            'status'            => 'required|string|max:50',
         ];
         $messages = [
             'bulan_berlaku.date' => 'Format tanggal bulan berlaku tidak valid.',
@@ -103,5 +100,32 @@ class BiayaPemasaranController extends Controller
 
         return redirect()->route('biaya-pemasaran.index')
             ->with('success', 'Data biaya berhasil dihapus.');
+    }
+
+    // ✅ Tambahan untuk tugas Pertemuan 13:
+
+    // a. findOrFail biasa
+    public function showErrorA($id)
+    {
+        $biaya = BiayaPemasaran::findOrFail($id);
+        return view('biaya-pemasaran.show', compact('biaya'));
+    }
+
+    // b. try-catch
+    public function showErrorB($id)
+    {
+        try {
+            $biaya = BiayaPemasaran::findOrFail($id);
+            return view('biaya-pemasaran.show', compact('biaya'));
+        } catch (ModelNotFoundException $e) {
+            return response()->view('errors.custom_not_found', [], 404);
+        }
+    }
+
+    // c. firstOrFail berdasarkan status
+    public function searchByStatus($status)
+    {
+        $biaya = BiayaPemasaran::where('status', $status)->firstOrFail();
+        return view('biaya-pemasaran.show', compact('biaya'));
     }
 }
