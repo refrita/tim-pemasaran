@@ -7,6 +7,7 @@
     <h2>Detail Anggota Tim</h2>
 
     <ul class="list-group mb-3">
+        <li class="list-group-item"><strong>ID:</strong> {{ $tim->id }}</li>
         <li class="list-group-item"><strong>Nama:</strong> {{ $tim->nama_anggota }}</li>
         <li class="list-group-item"><strong>Jabatan:</strong> {{ $tim->jabatan_anggota }}</li>
         <li class="list-group-item"><strong>Nama Pengguna:</strong> {{ $tim->nama_pengguna }}</li>

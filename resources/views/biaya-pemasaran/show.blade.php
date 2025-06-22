@@ -6,6 +6,7 @@
 <div class="card p-4 shadow-sm">
     <h2 class="mb-4">Detail Biaya Pemasaran</h2>
 
+    <p><strong>ID:</strong> {{ $biaya->id }}</p>
     <p><strong>Total Anggaran:</strong> {{ $biaya['total_anggaran'] }}</p>
     <p><strong>Anggaran Tersedia:</strong> {{ $biaya['anggaran_tersedia'] }}</p>
     <p><strong>Bulan Berlaku:</strong> {{ $biaya['bulan_berlaku'] }}</p>

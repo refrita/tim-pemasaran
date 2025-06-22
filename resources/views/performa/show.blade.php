@@ -7,6 +7,7 @@
     <h2 class="mb-4">Detail Performa</h2>
 
     <ul class="list-group mb-3">
+        <li class="list-group-item"><strong>ID:</strong> {{ $performa->['id'] }}</li>
         <li class="list-group-item"><strong>Tanggal:</strong> {{ $performa['tanggal'] }}</li>
         <li class="list-group-item"><strong>Jumlah Tayang:</strong> {{ $performa['jumlah_tayang'] }}</li>
         <li class="list-group-item"><strong>Jumlah Klik:</strong> {{ $performa['jumlah_klik'] }}</li>

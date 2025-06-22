@@ -6,6 +6,7 @@
 <div class="card p-4 shadow-sm">
     <h2 class="mb-4">Detail Iklan</h2>
 
+    <p><strong>ID:</strong> {{ $iklan->id }}</p>
     <p><strong>Nama Iklan:</strong> {{ $iklan->nama }}</p>
     <p><strong>Kategori:</strong> {{ $iklan->kategori }}</p>
     <p><strong>Tanggal Peluncuran:</strong> {{ $iklan->tanggal_peluncuran }}</p>

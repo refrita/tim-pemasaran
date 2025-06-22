@@ -48,8 +48,12 @@ class PlatformController extends Controller
 
     public function show($id)
     {
-        $platform = Platform::findOrFail($id);
-        return view('platform.show', compact('platform'));
+        try {
+            $platform = Platform::findOrFail($id);
+            return view('platform.show', compact('platform'));
+        } catch (ModelNotFoundException $e) {
+            return response()->view('errors.custom_not_found', ['message' => 'Data Platform tidak ditemukan.'], 404);
+        }
     }
 
     public function edit($id)
@@ -99,32 +103,5 @@ class PlatformController extends Controller
 
         return redirect()->route('platform.index')
             ->with('success', 'Data platform berhasil dihapus.');
-    }
-
-    // ✅ Tambahan untuk tugas Pertemuan 13:
-
-    // a. findOrFail biasa
-    public function showErrorA($id)
-    {
-        $platform = Platform::findOrFail($id);
-        return view('platform.show', compact('platform'));
-    }
-
-    // b. try-catch (error handler manual)
-    public function showErrorB($id)
-    {
-        try {
-            $platform = Platform::findOrFail($id);
-            return view('platform.show', compact('platform'));
-        } catch (ModelNotFoundException $e) {
-            return response()->view('errors.custom_not_found', [], 404);
-        }
-    }
-
-    // c. firstOrFail (berdasarkan nama platform)
-    public function searchByNama($nama)
-    {
-        $platform = Platform::where('nama', $nama)->firstOrFail();
-        return view('platform.show', compact('platform'));
     }
 }

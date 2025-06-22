@@ -48,8 +48,12 @@ class TimPemasaranController extends Controller
 
     public function show($id)
     {
-        $tim = TimPemasaran::findOrFail($id);
-        return view('tim-pemasaran.show', compact('tim'));
+        try {
+            $tim = TimPemasaran::findOrFail($id);
+            return view('tim-pemasaran.show', compact('tim'));
+        } catch (ModelNotFoundException $e) {
+            return response()->view('errors.custom_not_found', ['message' => 'Data Tim Pemasaran tidak ditemukan.'], 404);
+        }
     }
 
     public function edit($id)
@@ -106,30 +110,28 @@ class TimPemasaranController extends Controller
             ->with('success', 'Data tim pemasaran berhasil dihapus.');
     }
 
-    // ✅ Tambahan untuk tugas Pertemuan 13:
-
-    // a. Error handler pakai findOrFail biasa
-    public function showErrorA($id)
+    public function search(Request $request)
     {
-        $tim = TimPemasaran::findOrFail($id);
-        return view('tim-pemasaran.show', compact('tim'));
-    }
+        $keyword = $request->input('keyword');
 
-    // b. Error handler pakai try-catch
-    public function showErrorB($id)
-    {
-        try {
-            $tim = TimPemasaran::findOrFail($id);
-            return view('tim-pemasaran.show', compact('tim'));
-        } catch (ModelNotFoundException $e) {
-            return response()->view('errors.custom_not_found', [], 404);
+        $tim = TimPemasaran::where(function ($query) use ($keyword) {
+            if (is_numeric($keyword)) {
+                $query->where('id', $keyword);
+            }
+
+            $query->orWhere('nama_pengguna', 'LIKE', "%$keyword%")
+                ->orWhere('nama_anggota', 'LIKE', "%$keyword%");
+        })->first();
+
+        if (!$tim) {
+            return response()->view('errors.custom_not_found', [
+                'message' => "Data tidak ditemukan untuk kata kunci: \"$keyword\""
+            ], 404);
         }
+
+        return view('tim-pemasaran.show', ['tim' => $tim]);
     }
 
-    public function searchByNama($nama)
-    {
-        $tim = TimPemasaran::where('nama_anggota', $nama)->firstOrFail();
-        return view('tim-pemasaran.show', compact('tim'));
-    }
+
 
 }

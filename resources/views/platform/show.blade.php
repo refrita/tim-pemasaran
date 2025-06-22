@@ -7,6 +7,7 @@
     <h2>Detail Platform</h2>
 
     <ul class="list-group mb-3">
+        <li class="list-group-item"><strong>ID:</strong> {{ $platform->id }}</li>
         <li class="list-group-item"><strong>Nama Platform:</strong> {{ $platform->nama }}</li>
         <li class="list-group-item"><strong>Jenis Platform:</strong> {{ $platform->jenis }}</li>
     </ul>

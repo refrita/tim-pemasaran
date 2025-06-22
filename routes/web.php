@@ -93,6 +93,7 @@ Route::get('/pendaftaran-anggotatim', function () {
 
 // Tim Pemasaran
 use App\Http\Controllers\TimPemasaranController;
+Route::get('/tim-pemasaran/search', [TimPemasaranController::class, 'search'])->name('tim-pemasaran.search');
 Route::get('/tim-pemasaran', [TimPemasaranController::class, 'index'])->name('tim-pemasaran.index');
 Route::get('/tim-pemasaran/create', [TimPemasaranController::class, 'create'])->name('tim-pemasaran.create');
 Route::post('/tim-pemasaran', [TimPemasaranController::class, 'store'])->name('tim-pemasaran.store');
@@ -101,9 +102,6 @@ Route::get('/tim-pemasaran/{id}/edit', [TimPemasaranController::class, 'edit'])-
 Route::put('/tim-pemasaran/{id}', [TimPemasaranController::class, 'update'])->name('tim-pemasaran.update');
 Route::get('/tim-pemasaran/{id}/delete', [TimPemasaranController::class, 'delete'])->name('tim-pemasaran.delete');
 Route::delete('/tim-pemasaran/{id}', [TimPemasaranController::class, 'destroy'])->name('tim-pemasaran.destroy');
-Route::get('/tim-pemasaran/error-a/{id}', [TimPemasaranController::class, 'showErrorA']);
-Route::get('/tim-pemasaran/error-b/{id}', [TimPemasaranController::class, 'showErrorB']);
-Route::get('/tim-pemasaran/cari/{nama}', [TimPemasaranController::class, 'searchByNama']);
 
 // Platform
 use App\Http\Controllers\PlatformController;
@@ -115,9 +113,6 @@ Route::get('/platform/{id}/edit', [PlatformController::class, 'edit'])->name('pl
 Route::put('/platform/{id}', [PlatformController::class, 'update'])->name('platform.update');
 Route::get('/platform/{id}/delete', [PlatformController::class, 'delete'])->name('platform.delete');
 Route::delete('/platform/{id}', [PlatformController::class, 'destroy'])->name('platform.destroy');
-Route::get('/platform/error-a/{id}', [PlatformController::class, 'showErrorA']);      // findOrFail
-Route::get('/platform/error-b/{id}', [PlatformController::class, 'showErrorB']);      // try-catch
-Route::get('/platform/cari/{nama}',   [PlatformController::class, 'searchByNama']);   // firstOrFail
 
 // Biaya Pemasaran
 use App\Http\Controllers\BiayaPemasaranController;
@@ -129,9 +124,6 @@ Route::get('/biaya-pemasaran/{id}/edit', [BiayaPemasaranController::class, 'edit
 Route::put('/biaya-pemasaran/{id}', [BiayaPemasaranController::class, 'update'])->name('biaya-pemasaran.update');
 Route::get('/biaya-pemasaran/{id}/delete', [BiayaPemasaranController::class, 'delete'])->name('biaya-pemasaran.delete');
 Route::delete('/biaya-pemasaran/{id}', [BiayaPemasaranController::class, 'destroy'])->name('biaya-pemasaran.destroy');
-Route::get('/biaya/error-a/{id}', [BiayaPemasaranController::class, 'showErrorA']);         // findOrFail
-Route::get('/biaya/error-b/{id}', [BiayaPemasaranController::class, 'showErrorB']);         // try-catch
-Route::get('/biaya/cari-status/{status}', [BiayaPemasaranController::class, 'searchByStatus']); // firstOrFail
 
 // Performa
 use App\Http\Controllers\PerformaController;
@@ -143,10 +135,6 @@ Route::get('/performa/{id}/edit', [PerformaController::class, 'edit'])->name('pe
 Route::put('/performa/{id}', [PerformaController::class, 'update'])->name('performa.update');
 Route::get('/performa/{id}/delete', [PerformaController::class, 'delete'])->name('performa.delete');
 Route::delete('/performa/{id}', [PerformaController::class, 'destroy'])->name('performa.destroy');
-Route::get('/performa/error-a/{id}', [PerformaController::class, 'showErrorA']);         // findOrFail
-Route::get('/performa/error-b/{id}', [PerformaController::class, 'showErrorB']);         // try-catch
-Route::get('/performa/cari-konversi/{konversi}', [PerformaController::class, 'searchByKonversi']); // firstOrFail
-
 
 // Iklan
 use App\Http\Controllers\IklanController;
@@ -158,9 +146,6 @@ Route::get('/iklan/{id}/edit', [IklanController::class, 'edit'])->name('iklan.ed
 Route::put('/iklan/{id}', [IklanController::class, 'update'])->name('iklan.update');
 Route::get('/iklan/{id}/delete', [IklanController::class, 'delete'])->name('iklan.delete');
 Route::delete('/iklan/{id}', [IklanController::class, 'destroy'])->name('iklan.destroy');
-Route::get('/iklan/error-a/{id}', [IklanController::class, 'showErrorA']);      // findOrFail biasa
-Route::get('/iklan/error-b/{id}', [IklanController::class, 'showErrorB']);      // try-catch
-Route::get('/iklan/cari/{nama}',    [IklanController::class, 'searchByNama']);  // firstOrFail
 
 use App\Http\Controllers\ImageController;
 Route::get('/upload', [ImageController::class, 'create']);

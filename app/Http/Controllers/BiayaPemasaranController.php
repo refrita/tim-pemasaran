@@ -49,8 +49,12 @@ class BiayaPemasaranController extends Controller
 
     public function show($id)
     {
-        $biaya = BiayaPemasaran::findOrFail($id);
-        return view('biaya-pemasaran.show', compact('biaya'));
+        try {
+            $biaya = BiayaPemasaran::findOrFail($id);
+            return view('biaya-pemasaran.show', compact('biaya'));
+        } catch (ModelNotFoundException $e) {
+            return response()->view('errors.custom_not_found', ['message' => 'Data Biaya Pemasaran tidak ditemukan.'], 404);
+        }
     }
 
     public function edit($id)
@@ -102,30 +106,4 @@ class BiayaPemasaranController extends Controller
             ->with('success', 'Data biaya berhasil dihapus.');
     }
 
-    // ✅ Tambahan untuk tugas Pertemuan 13:
-
-    // a. findOrFail biasa
-    public function showErrorA($id)
-    {
-        $biaya = BiayaPemasaran::findOrFail($id);
-        return view('biaya-pemasaran.show', compact('biaya'));
-    }
-
-    // b. try-catch
-    public function showErrorB($id)
-    {
-        try {
-            $biaya = BiayaPemasaran::findOrFail($id);
-            return view('biaya-pemasaran.show', compact('biaya'));
-        } catch (ModelNotFoundException $e) {
-            return response()->view('errors.custom_not_found', [], 404);
-        }
-    }
-
-    // c. firstOrFail berdasarkan status
-    public function searchByStatus($status)
-    {
-        $biaya = BiayaPemasaran::where('status', $status)->firstOrFail();
-        return view('biaya-pemasaran.show', compact('biaya'));
-    }
 }
