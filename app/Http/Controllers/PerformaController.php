@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Performa;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class PerformaController extends Controller
 {
@@ -22,27 +23,27 @@ class PerformaController extends Controller
 
     public function store(Request $request)
     {
-        $rules = [
-            'jumlah_tayang' => 'required|integer|min:0',
-            'jumlah_klik'   => 'required|integer|min:0',
-            'konversi'      => 'required|numeric|min:0',
-            'tanggal'       => 'required|date',
-            'id_platform'   => 'required|exists:platforms,id',
-        ];
+        try {
+            $validated = $request->validate([
+                'jumlah_tayang' => 'required|integer|min:0',
+                'jumlah_klik'   => 'required|integer|min:0',
+                'konversi'      => 'required|numeric|min:0',
+                'tanggal'       => 'required|date',
+                'id_platform'   => 'required|exists:platforms,id',
+            ]);
 
-        $validator = Validator::make($request->all(), $rules);
+            Performa::create($validated);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->with('error', 'Data performa tidak berhasil disimpan, data tidak valid:')
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->route('performa.index')->with('success', 'Data performa berhasil disimpan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal menyimpan data performa', [
+                'message' => $e->getMessage(),
+                'input'   => $request->all(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.');
         }
-
-        Performa::create($validator->validated());
-
-        return redirect()->route('performa.index')
-            ->with('success', 'Data performa berhasil disimpan.');
     }
 
     public function show($id)
@@ -51,55 +52,71 @@ class PerformaController extends Controller
             $performa = Performa::findOrFail($id);
             return view('performa.show', compact('performa'));
         } catch (ModelNotFoundException $e) {
-            return response()->view('errors.custom_not_found', ['message' => 'Data Performa tidak ditemukan.'], 404);
+            return redirect()->route('performa.index')->with('error', 'Data performa tidak ditemukan.');
         }
     }
 
     public function edit($id)
     {
-        $performa = Performa::findOrFail($id);
-        return view('performa.edit', compact('performa'));
+        try {
+            $performa = Performa::findOrFail($id);
+            return view('performa.edit', compact('performa'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('performa.index')->with('error', 'Data performa tidak ditemukan.');
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $rules = [
-            'jumlah_tayang' => 'required|integer|min:0',
-            'jumlah_klik'   => 'required|integer|min:0',
-            'konversi'      => 'required|numeric|min:0',
-            'tanggal'       => 'required|date',
-            'id_platform'   => 'required|exists:platforms,id',
-        ];
+        try {
+            $validated = $request->validate([
+                'jumlah_tayang' => 'required|integer|min:0',
+                'jumlah_klik'   => 'required|integer|min:0',
+                'konversi'      => 'required|numeric|min:0',
+                'tanggal'       => 'required|date',
+                'id_platform'   => 'required|exists:platforms,id',
+            ]);
 
-        $validator = Validator::make($request->all(), $rules);
+            $performa = Performa::findOrFail($id);
+            $performa->update($validated);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->with('error', 'Data performa tidak berhasil diperbarui, data tidak valid:')
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->route('performa.index')->with('success', 'Data performa berhasil diperbarui.');
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('performa.index')->with('error', 'Data performa tidak ditemukan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal memperbarui data performa', [
+                'message' => $e->getMessage(),
+                'input'   => $request->all(),
+                'trace'   => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data.');
         }
-
-        $performa = Performa::findOrFail($id);
-        $performa->update($validator->validated());
-
-        return redirect()->route('performa.index', $id)
-            ->with('success', 'Data performa berhasil diperbarui.');
     }
 
     public function delete($id)
     {
-        $performa = Performa::findOrFail($id);
-        return view('performa.delete', compact('performa'));
+        try {
+            $performa = Performa::findOrFail($id);
+            return view('performa.delete', compact('performa'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('performa.index')->with('error', 'Data performa tidak ditemukan.');
+        }
     }
 
     public function destroy($id)
     {
-        $performa = Performa::findOrFail($id);
-        $performa->delete();
+        try {
+            TimPemasaran::create($validated);
 
-        return redirect()->route('performa.index')
-            ->with('success', 'Data performa berhasil dihapus.');
+            return redirect()->route('tim-pemasaran.index')->with('success', 'Data tim pemasaran berhasil disimpan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal menyimpan tim pemasaran', [
+                'input' => $request->all(),
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.');
+        }
     }
-
 }

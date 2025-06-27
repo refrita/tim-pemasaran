@@ -6,6 +6,8 @@ use App\Models\Platform;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class PlatformController extends Controller
 {
@@ -23,27 +25,26 @@ class PlatformController extends Controller
 
     public function store(Request $request)
     {
-        $rules = [
-            'nama_platform'  => 'required|string|max:255',
-            'jenis_platform' => 'required|string|max:255',
-        ];
+        try {
+            $validated = $request->validate([
+                'nama_platform'  => 'required|string|max:255',
+                'jenis_platform' => 'required|string|max:255',
+            ]);
 
-        $validator = Validator::make($request->all(), $rules);
+            Platform::create([
+                'nama'  => $validated['nama_platform'],
+                'jenis' => $validated['jenis_platform'],
+            ]);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->with('error', 'Data platform tidak berhasil disimpan, data tidak valid:')
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->route('platform.index')->with('success', 'Data platform berhasil disimpan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal menyimpan platform', [
+                'input' => $request->all(),
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.');
         }
-
-        Platform::create([
-            'nama'  => $validator->validated()['nama_platform'],
-            'jenis' => $validator->validated()['jenis_platform'],
-        ]);
-
-        return redirect()->route('platform.index')
-            ->with('success', 'Data platform berhasil disimpan.');
     }
 
     public function show($id)
@@ -52,56 +53,73 @@ class PlatformController extends Controller
             $platform = Platform::findOrFail($id);
             return view('platform.show', compact('platform'));
         } catch (ModelNotFoundException $e) {
-            return response()->view('errors.custom_not_found', ['message' => 'Data Platform tidak ditemukan.'], 404);
+            return redirect()->route('platform.index')->with('error', 'Data platform tidak ditemukan.');
         }
     }
 
     public function edit($id)
     {
-        $platform = Platform::findOrFail($id);
-        return view('platform.edit', compact('platform'));
+        try {
+            $platform = Platform::findOrFail($id);
+            return view('platform.edit', compact('platform'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('platform.index')->with('error', 'Data platform tidak ditemukan.');
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $rules = [
-            'nama_platform'  => 'required|string|max:255',
-            'jenis_platform' => 'required|string|max:255',
-        ];
+        try {
+            $validated = $request->validate([
+                'nama_platform'  => 'required|string|max:255',
+                'jenis_platform' => 'required|string|max:255',
+            ]);
 
-        $validator = Validator::make($request->all(), $rules);
+            $platform = Platform::findOrFail($id);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->with('error', 'Data platform tidak berhasil diperbarui, data tidak valid:')
-                ->withErrors($validator)
-                ->withInput();
+            $platform->update([
+                'nama'  => $validated['nama_platform'],
+                'jenis' => $validated['jenis_platform'],
+            ]);
+
+            return redirect()->route('platform.index')->with('success', 'Data platform berhasil diperbarui.');
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('platform.index')->with('error', 'Data platform tidak ditemukan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal memperbarui platform', [
+                'id' => $id,
+                'input' => $request->all(),
+                'message' => $e->getMessage(),
+            ]);
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data.');
         }
-
-        $platform = Platform::findOrFail($id);
-        $data = $validator->validated();
-
-        $platform->update([
-            'nama'  => $data['nama_platform'],
-            'jenis' => $data['jenis_platform'],
-        ]);
-
-        return redirect()->route('platform.index', $id)
-            ->with('success', 'Data platform berhasil diperbarui.');
     }
 
     public function delete($id)
     {
-        $platform = Platform::findOrFail($id);
-        return view('platform.delete', compact('platform'));
+        try {
+            $platform = Platform::findOrFail($id);
+            return view('platform.delete', compact('platform'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('platform.index')->with('error', 'Data platform tidak ditemukan.');
+        }
     }
 
     public function destroy($id)
     {
-        $platform = Platform::findOrFail($id);
-        $platform->delete();
+        try {
+            $platform = Platform::findOrFail($id);
+            $platform->delete();
 
-        return redirect()->route('platform.index')
-            ->with('success', 'Data platform berhasil dihapus.');
+            return redirect()->route('platform.index')->with('success', 'Data platform berhasil dihapus.');
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('platform.index')->with('error', 'Data platform tidak ditemukan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal menghapus platform', [
+                'id' => $id,
+                'message' => $e->getMessage(),
+            ]);
+            return redirect()->route('platform.index')->with('error', 'Terjadi kesalahan saat menghapus data.');
+        }
     }
 }

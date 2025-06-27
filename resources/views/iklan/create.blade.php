@@ -6,20 +6,20 @@
 <div class="card p-4 shadow-sm">
     <h2 class="mb-4">Tambah Iklan Baru</h2>
 
-    {{-- Success / Error flash --}}
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    {{-- Tampilkan error dari session --}}
     @if(session('error'))
-        <div class="alert alert-danger">
-            <strong>{{ session('error') }}</strong>
-            @if($errors->any())
-                <ul class="mb-0">
-                    @foreach($errors->all() as $err)
-                        <li>{{ $err }}</li>
-                    @endforeach
-                </ul>
-            @endif
+        <div class="alert alert-danger mb-3">{{ session('error') }}</div>
+    @endif
+
+    {{-- Tampilkan validasi error --}}
+    @if($errors->any())
+        <div class="alert alert-danger mb-3">
+            <strong>Terjadi kesalahan:</strong>
+            <ul class="mb-0">
+                @foreach($errors->all() as $err)
+                    <li>{{ $err }}</li>
+                @endforeach
+            </ul>
         </div>
     @endif
 
@@ -33,6 +33,7 @@
                 name="nama"
                 class="form-control @error('nama') is-invalid @enderror"
                 value="{{ old('nama') }}"
+                required
             >
             @error('nama')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -46,6 +47,7 @@
                 name="kategori"
                 class="form-control @error('kategori') is-invalid @enderror"
                 value="{{ old('kategori') }}"
+                required
             >
             @error('kategori')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -59,6 +61,7 @@
                 name="tanggal_peluncuran"
                 class="form-control @error('tanggal_peluncuran') is-invalid @enderror"
                 value="{{ old('tanggal_peluncuran') }}"
+                required
             >
             @error('tanggal_peluncuran')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -72,6 +75,7 @@
                 name="tanggal_selesai"
                 class="form-control @error('tanggal_selesai') is-invalid @enderror"
                 value="{{ old('tanggal_selesai') }}"
+                required
             >
             @error('tanggal_selesai')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -85,6 +89,7 @@
                 name="id_biaya_pemasaran"
                 class="form-control @error('id_biaya_pemasaran') is-invalid @enderror"
                 value="{{ old('id_biaya_pemasaran') }}"
+                required
             >
             @error('id_biaya_pemasaran')
                 <div class="invalid-feedback">{{ $message }}</div>
@@ -98,6 +103,7 @@
                 name="id_platform"
                 class="form-control @error('id_platform') is-invalid @enderror"
                 value="{{ old('id_platform') }}"
+                required
             >
             @error('id_platform')
                 <div class="invalid-feedback">{{ $message }}</div>

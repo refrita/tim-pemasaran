@@ -43,7 +43,7 @@
             <tbody>
                 @foreach ($performa as $p)
                     <tr>
-                        <td>{{ \Illuminate\Support\Carbon::parse($p->tanggal)->format('d-m-Y') }}</td>
+                        <td>{{ \Carbon\Carbon::parse($p->tanggal)->format('d-m-Y') }}</td>
                         <td>{{ number_format($p->jumlah_tayang) }}</td>
                         <td>{{ number_format($p->jumlah_klik) }}</td>
                         <td>{{ $p->konversi }}</td>

@@ -4,21 +4,11 @@
 
 @section('content')
 <div class="container mt-4">
-    {{-- Flash messages --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
     @if(session('error'))
-        <div class="alert alert-danger">
-            <strong>{{ session('error') }}</strong>
-            @if($errors->any())
-                <ul class="mb-0">
-                    @foreach($errors->all() as $err)
-                        <li>{{ $err }}</li>
-                    @endforeach
-                </ul>
-            @endif
-        </div>
+        <div class="alert alert-danger">{{ session('error') }}</div>
     @endif
 
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -32,7 +22,7 @@
         <table class="table table-bordered">
             <thead class="table-light">
                 <tr>
-                    <th>Nama Platform</th>
+                    <th>Nama</th>
                     <th>Jenis</th>
                     <th>Aksi</th>
                 </tr>

@@ -4,8 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Iklan;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Throwable;
 
 class IklanController extends Controller
 {
@@ -23,31 +24,30 @@ class IklanController extends Controller
 
     public function store(Request $request)
     {
-        $rules = [
-            'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
-            'id_platform'        => 'required|exists:platforms,id',
-            'nama'               => 'required|string|max:50',
-            'kategori'           => 'required|string|max:100',
-            'tanggal_peluncuran' => 'required|date',
-            'tanggal_selesai'    => 'required|date|after_or_equal:tanggal_peluncuran',
-        ];
-        $messages = [
-            'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal peluncuran.',
-        ];
+        try {
+            $validated = $request->validate([
+                'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
+                'id_platform'        => 'required|exists:platforms,id',
+                'nama'               => 'required|string|max:50',
+                'kategori'           => 'required|string|max:100',
+                'tanggal_peluncuran' => 'required|date',
+                'tanggal_selesai'    => 'required|date|after_or_equal:tanggal_peluncuran',
+            ], [
+                'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal peluncuran.',
+            ]);
 
-        $validator = Validator::make($request->all(), $rules, $messages);
+            Iklan::create($validated);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->with('error', 'Data iklan tidak berhasil disimpan, data tidak valid:')
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->route('iklan.index')->with('success', 'Data iklan berhasil disimpan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal menyimpan data iklan', [
+                'message' => $e->getMessage(),
+                'input' => $request->all(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.');
         }
-
-        Iklan::create($validator->validated());
-
-        return redirect()->route('iklan.index')
-            ->with('success', 'Data iklan berhasil disimpan.');
     }
 
     public function show($id)
@@ -56,59 +56,78 @@ class IklanController extends Controller
             $iklan = Iklan::findOrFail($id);
             return view('iklan.show', compact('iklan'));
         } catch (ModelNotFoundException $e) {
-            return response()->view('errors.custom_not_found', ['message' => 'Data Iklan tidak ditemukan.'], 404);
+            return redirect()->route('iklan.index')->with('error', 'Data iklan tidak ditemukan.');
         }
     }
 
     public function edit($id)
     {
-        $iklan = Iklan::findOrFail($id);
-        return view('iklan.edit', compact('iklan'));
+        try {
+            $iklan = Iklan::findOrFail($id);
+            return view('iklan.edit', compact('iklan'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('iklan.index')->with('error', 'Data iklan tidak ditemukan.');
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $rules = [
-            'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
-            'id_platform'        => 'required|exists:platforms,id',
-            'nama'               => 'required|string|max:50',
-            'kategori'           => 'required|string|max:100',
-            'tanggal_peluncuran' => 'required|date',
-            'tanggal_selesai'    => 'required|date|after_or_equal:tanggal_peluncuran',
-        ];
-        $messages = [
-            'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal peluncuran.',
-        ];
+        try {
+            $validated = $request->validate([
+                'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
+                'id_platform'        => 'required|exists:platforms,id',
+                'nama'               => 'required|string|max:50',
+                'kategori'           => 'required|string|max:100',
+                'tanggal_peluncuran' => 'required|date',
+                'tanggal_selesai'    => 'required|date|after_or_equal:tanggal_peluncuran',
+            ], [
+                'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal peluncuran.',
+            ]);
 
-        $validator = Validator::make($request->all(), $rules, $messages);
+            $iklan = Iklan::findOrFail($id);
+            $iklan->update($validated);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->with('error', 'Data iklan tidak berhasil diperbarui, data tidak valid:')
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->route('iklan.index')->with('success', 'Data iklan berhasil diperbarui.');
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('iklan.index')->with('error', 'Data iklan tidak ditemukan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal memperbarui data iklan', [
+                'message' => $e->getMessage(),
+                'input' => $request->all(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data.');
         }
-
-        $iklan = Iklan::findOrFail($id);
-        $iklan->update($validator->validated());
-
-        return redirect()->route('iklan.index', $id)
-            ->with('success', 'Data iklan berhasil diperbarui.');
     }
 
     public function delete($id)
     {
-        $iklan = Iklan::findOrFail($id);
-        return view('iklan.delete', compact('iklan'));
+        try {
+            $iklan = Iklan::findOrFail($id);
+            return view('iklan.delete', compact('iklan'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('iklan.index')->with('error', 'Data iklan tidak ditemukan.');
+        }
     }
 
     public function destroy($id)
     {
-        $iklan = Iklan::findOrFail($id);
-        $iklan->delete();
+        try {
+            $iklan = Iklan::findOrFail($id);
+            $iklan->delete();
 
-        return redirect()->route('iklan.index')
-            ->with('success', 'Data iklan berhasil dihapus.');
+            return redirect()->route('iklan.index')->with('success', 'Data iklan berhasil dihapus.');
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('iklan.index')->with('error', 'Data iklan tidak ditemukan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal menghapus data iklan', [
+                'id' => $id,
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return redirect()->route('iklan.index')->with('error', 'Terjadi kesalahan saat menghapus data.');
+        }
     }
-
 }

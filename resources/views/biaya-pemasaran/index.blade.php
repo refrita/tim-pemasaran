@@ -9,9 +9,15 @@
     </div>
 @endif
 
+@if (session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Daftar Biaya Pemasaran</h2>
-    <a href="/biaya-pemasaran/create" class="btn btn-primary">+ Tambah Biaya</a>
+    <a href="{{ route('biaya-pemasaran.create') }}" class="btn btn-primary">+ Tambah Biaya</a>
 </div>
 
 @if ($biaya->isEmpty())
@@ -24,9 +30,9 @@
             Bulan: {{ \Carbon\Carbon::parse($b['bulan_berlaku'])->format('F Y') }} - Total: Rp{{ number_format($b['total_anggaran']) }} - Status: {{ $b['status'] }}
         </div>
         <div>
-            <a href="/biaya-pemasaran/{{ $b['id'] }}" class="btn btn-sm btn-info">Lihat</a>
-            <a href="/biaya-pemasaran/{{ $b['id'] }}/edit" class="btn btn-sm btn-warning">Edit</a>
-            <a href="/biaya-pemasaran/{{ $b['id'] }}/delete" class="btn btn-sm btn-danger">Hapus</a>
+            <a href="{{ route('biaya-pemasaran.show', $b['id']) }}" class="btn btn-sm btn-info">Lihat</a>
+            <a href="{{ route('biaya-pemasaran.edit', $b['id']) }}" class="btn btn-sm btn-warning">Edit</a>
+            <a href="{{ route('biaya-pemasaran.delete', $b['id']) }}" class="btn btn-sm btn-danger">Hapus</a>
         </div>
     </li>
 @endforeach

@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container mt-4">
-    <h2>Detail Platform</h2>
+    <h2 class="mb-4">Detail Platform</h2>
 
     <ul class="list-group mb-3">
         <li class="list-group-item"><strong>ID:</strong> {{ $platform->id }}</li>

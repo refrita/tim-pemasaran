@@ -3,21 +3,12 @@
 @section('title', 'Daftar Iklan')
 
 @section('content')
-    {{-- Success / Error flash --}}
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+    @if (session('success'))
+        <div class="alert alert-success mb-3">{{ session('success') }}</div>
     @endif
-    @if(session('error'))
-        <div class="alert alert-danger">
-            <strong>{{ session('error') }}</strong>
-            @if($errors->any())
-                <ul class="mb-0">
-                    @foreach($errors->all() as $err)
-                        <li>{{ $err }}</li>
-                    @endforeach
-                </ul>
-            @endif
-        </div>
+
+    @if (session('error'))
+        <div class="alert alert-danger mb-3">{{ session('error') }}</div>
     @endif
 
     <div class="d-flex justify-content-between align-items-center mb-3">
@@ -35,9 +26,9 @@
                         <strong>{{ $i->nama }}</strong> — {{ $i->kategori }}
                     </div>
                     <div>
-                        <a href="{{ route('iklan.show', $i->id) }}"       class="btn btn-sm btn-info">Lihat</a>
-                        <a href="{{ route('iklan.edit', $i->id) }}"       class="btn btn-sm btn-warning">Edit</a>
-                        <a href="{{ route('iklan.delete', $i->id) }}"     class="btn btn-sm btn-danger">Hapus</a>
+                        <a href="{{ route('iklan.show', $i->id) }}" class="btn btn-sm btn-info">Lihat</a>
+                        <a href="{{ route('iklan.edit', $i->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                        <a href="{{ route('iklan.delete', $i->id) }}" class="btn btn-sm btn-danger">Hapus</a>
                     </div>
                 </div>
             @endforeach

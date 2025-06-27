@@ -6,6 +6,8 @@ use App\Models\TimPemasaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class TimPemasaranController extends Controller
 {
@@ -22,28 +24,26 @@ class TimPemasaranController extends Controller
 
     public function store(Request $request)
     {
-        $rules = [
-            'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
-            'id_platform'        => 'required|exists:platforms,id',
-            'nama_anggota'       => 'required|string|max:100',
-            'jabatan_anggota'    => 'required|string|max:100',
-            'nama_pengguna'      => 'required|string|max:100',
-            'kata_sandi'         => 'required|string|max:100',
-        ];
+        try {
+            $validated = $request->validate([
+                'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
+                'id_platform'        => 'required|exists:platforms,id',
+                'nama_pengguna' => 'required|string|max:100|unique:tim_pemasarans,nama_pengguna', // store
+                'jabatan_anggota'    => 'required|string|max:100',
+                'nama_pengguna'      => 'required|string|max:100',
+                'kata_sandi'         => 'required|string|max:100',
+            ]);
 
-        $validator = Validator::make($request->all(), $rules);
+            TimPemasaran::create($validated);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->with('error', 'Data tim pemasaran tidak berhasil disimpan, data tidak valid:')
-                ->withErrors($validator)
-                ->withInput();
+            return redirect()->route('tim-pemasaran.index')->with('success', 'Data tim pemasaran berhasil disimpan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal menyimpan tim pemasaran', [
+                'input' => $request->all(),
+                'message' => $e->getMessage(),
+            ]);
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.');
         }
-
-        TimPemasaran::create($validator->validated());
-
-        return redirect()->route('tim-pemasaran.index')
-            ->with('success', 'Data tim pemasaran berhasil disimpan.');
     }
 
     public function show($id)
@@ -52,62 +52,81 @@ class TimPemasaranController extends Controller
             $tim = TimPemasaran::findOrFail($id);
             return view('tim-pemasaran.show', compact('tim'));
         } catch (ModelNotFoundException $e) {
-            return response()->view('errors.custom_not_found', ['message' => 'Data Tim Pemasaran tidak ditemukan.'], 404);
+            return redirect()->route('tim-pemasaran.index')->with('error', 'Data tim pemasaran tidak ditemukan.');
         }
     }
 
     public function edit($id)
     {
-        $tim = TimPemasaran::findOrFail($id);
-        return view('tim-pemasaran.edit', compact('tim'));
+        try {
+            $tim = TimPemasaran::findOrFail($id);
+            return view('tim-pemasaran.edit', compact('tim'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('tim-pemasaran.index')->with('error', 'Data tim pemasaran tidak ditemukan.');
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $rules = [
-            'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
-            'id_platform'        => 'required|exists:platforms,id',
-            'nama_anggota'       => 'required|string|max:100',
-            'jabatan_anggota'    => 'required|string|max:100',
-            'nama_pengguna'      => 'required|string|max:100',
-            'kata_sandi'         => 'nullable|string|max:100',
-        ];
+        try {
+            $validated = $request->validate([
+                'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
+                'id_platform'        => 'required|exists:platforms,id',
+                'nama_anggota'       => 'required|string|max:100',
+                'jabatan_anggota'    => 'required|string|max:100',
+                'nama_pengguna' => 'required|string|max:100|unique:tim_pemasarans,nama_pengguna,' . $id, // update
+                'kata_sandi'         => 'nullable|string|max:100',
+            ]);
 
-        $validator = Validator::make($request->all(), $rules);
+            $tim = TimPemasaran::findOrFail($id);
 
-        if ($validator->fails()) {
-            return redirect()->back()
-                ->with('error', 'Data tim pemasaran tidak berhasil diperbarui, data tidak valid:')
-                ->withErrors($validator)
-                ->withInput();
+            if (empty($validated['kata_sandi'])) {
+                unset($validated['kata_sandi']);
+            }
+
+            $tim->update($validated);
+
+            return redirect()->route('tim-pemasaran.index')->with('success', 'Data tim pemasaran berhasil diperbarui.');
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('tim-pemasaran.index')->with('error', 'Data tim pemasaran tidak ditemukan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal memperbarui tim pemasaran', [
+                'id' => $id,
+                'input' => $request->all(),
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat memperbarui data.');
         }
-
-        $tim  = TimPemasaran::findOrFail($id);
-        $data = $validator->validated();
-
-        if (empty($data['kata_sandi'])) {
-            unset($data['kata_sandi']);
-        }
-
-        $tim->update($data);
-
-        return redirect()->route('tim-pemasaran.index', $id)
-            ->with('success', 'Data tim pemasaran berhasil diperbarui.');
     }
 
     public function delete($id)
     {
-        $tim = TimPemasaran::findOrFail($id);
-        return view('tim-pemasaran.delete', compact('tim'));
+        try {
+            $tim = TimPemasaran::findOrFail($id);
+            return view('tim-pemasaran.delete', compact('tim'));
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('tim-pemasaran.index')->with('error', 'Data tim pemasaran tidak ditemukan.');
+        }
     }
 
     public function destroy($id)
     {
-        $tim = TimPemasaran::findOrFail($id);
-        $tim->delete();
+        try {
+            $tim = TimPemasaran::findOrFail($id);
+            $tim->delete();
 
-        return redirect()->route('tim-pemasaran.index')
-            ->with('success', 'Data tim pemasaran berhasil dihapus.');
+            return redirect()->route('tim-pemasaran.index')->with('success', 'Data tim pemasaran berhasil dihapus.');
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('tim-pemasaran.index')->with('error', 'Data tim pemasaran tidak ditemukan.');
+        } catch (Throwable $e) {
+            Log::error('Gagal menghapus tim pemasaran', [
+                'id' => $id,
+                'message' => $e->getMessage(),
+            ]);
+
+            return redirect()->route('tim-pemasaran.index')->with('error', 'Terjadi kesalahan saat menghapus data.');
+        }
     }
 
     public function search(Request $request)
@@ -120,18 +139,13 @@ class TimPemasaranController extends Controller
             }
 
             $query->orWhere('nama_pengguna', 'LIKE', "%$keyword%")
-                ->orWhere('nama_anggota', 'LIKE', "%$keyword%");
+                  ->orWhere('nama_anggota', 'LIKE', "%$keyword%");
         })->first();
 
         if (!$tim) {
-            return response()->view('errors.custom_not_found', [
-                'message' => "Data tidak ditemukan untuk kata kunci: \"$keyword\""
-            ], 404);
+            return redirect()->route('tim-pemasaran.index')->with('error', "Data tidak ditemukan untuk kata kunci: \"$keyword\"");
         }
 
-        return view('tim-pemasaran.show', ['tim' => $tim]);
+        return view('tim-pemasaran.show', compact('tim'));
     }
-
-
-
 }
