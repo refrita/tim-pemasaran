@@ -26,30 +26,30 @@ class IklanController extends Controller
     {
         try {
             $validated = $request->validate([
-                'id_biaya_pemasaran' => 'required|exists:biaya_pemasarans,id',
-                'id_platform'        => 'required|exists:platforms,id',
-                'nama'               => 'required|string|max:50',
-                'kategori'           => 'required|string|max:100',
+                'id_biaya_pemasaran' => 'required|integer',
+                'id_platform' => 'required|integer',
+                'nama' => 'required|string|max:50',
+                'kategori' => 'required|string|max:100',
                 'tanggal_peluncuran' => 'required|date',
-                'tanggal_selesai'    => 'required|date|after_or_equal:tanggal_peluncuran',
+                'tanggal_selesai' => 'required|date|after_or_equal:tanggal_peluncuran',
             ], [
                 'tanggal_selesai.after_or_equal' => 'Tanggal selesai harus sama atau setelah tanggal peluncuran.',
             ]);
 
             Iklan::create($validated);
 
-            return redirect()->route('iklan.index')->with('success', 'Data iklan berhasil disimpan.');
+            return redirect()->route('iklan.index')
+                ->with('success', 'Iklan berhasil ditambahkan!');
         } catch (Throwable $e) {
-            Log::error('Gagal menyimpan data iklan', [
-                'message' => $e->getMessage(),
-                'input' => $request->all(),
+            Log::error('Error tambah iklan: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
+                'input' => $request->all()
             ]);
 
-            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.');
+            return back()->withInput()
+                ->with('error', 'Gagal menambahkan iklan: '.$e->getMessage());
         }
     }
-
     public function show($id)
     {
         try {

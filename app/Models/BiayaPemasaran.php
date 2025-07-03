@@ -12,25 +12,55 @@ class BiayaPemasaran extends Model
     protected $table = 'BIAYA_PEMASARANS';
     protected $fillable = [
         'total_anggaran',
-        'anggaran_tersedia',
+        'anggaran_tersedia', 
         'bulan_berlaku',
-        'status',
+        'status'
     ];
 
-    protected $primaryKey = 'id';
+    protected $casts = [
+        'bulan_berlaku' => 'date:Y-m-d',
+        'total_anggaran' => 'integer',
+        'anggaran_tersedia' => 'integer'
+    ];
 
-    public $incrementing = true;
-    protected $keyType = 'int';
-
-    public $timestamps = false;
-
-    public static function getAll()
+    public function biayaPemasaran()
     {
-        return self::all();
+        return $this->belongsTo(BiayaPemasaran::class, 'id_biaya_pemasaran');
+    }
+    
+    public function platform()
+    {
+        return $this->belongsTo(Platform::class, 'id_platform');
     }
 
-    public static function find($id)
+    // Accessor untuk format tampilan
+    public function getTotalAnggaranFormattedAttribute()
     {
-        return self::where('id', $id)->first();
+        return 'Rp ' . number_format($this->total_anggaran, 0, ',', '.');
+    }
+
+    public function getAnggaranTersediaFormattedAttribute()
+    {
+        return 'Rp ' . number_format($this->anggaran_tersedia, 0, ',', '.');
+    }
+
+    public function getDisplayAttribute()
+    {
+        return sprintf("Rp %s - %s", 
+            number_format($this->total_anggaran, 0, ',', '.'),
+            $this->bulan_berlaku->format('F Y')
+        );
+    }
+
+    // Validasi custom sebelum menyimpan
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($model) {
+            if ($model->anggaran_tersedia > $model->total_anggaran) {
+                throw new \Exception('Anggaran tersedia tidak boleh melebihi total anggaran');
+            }
+        });
     }
 }

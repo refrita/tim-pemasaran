@@ -25,25 +25,27 @@ class BiayaPemasaranController extends Controller
     {
         try {
             $validated = $request->validate([
-                'total_anggaran'    => 'required|integer|min:0',
-                'anggaran_tersedia' => 'required|integer|min:0',
-                'bulan_berlaku'     => 'required|date',
-                'status'            => 'required|string|max:50',
+                'total_anggaran' => 'required|integer|min:0',
+                'anggaran_tersedia' => 'required|integer|min:0|lte:total_anggaran',
+                'bulan_berlaku' => 'required|date',
+                'status' => 'required|in:aktif,nonaktif,terpakai'
             ], [
-                'bulan_berlaku.date' => 'Format tanggal bulan berlaku tidak valid.',
+                'anggaran_tersedia.lte' => 'Anggaran tersedia tidak boleh melebihi total anggaran',
+                'status.in' => 'Status harus salah satu: aktif, nonaktif, terpakai'
             ]);
 
             BiayaPemasaran::create($validated);
 
-            return redirect()->route('biaya-pemasaran.index')->with('success', 'Data biaya berhasil disimpan.');
-        } catch (Throwable $e) {
-            Log::error('Gagal menyimpan data biaya pemasaran', [
-                'message' => $e->getMessage(),
+            return redirect()->route('biaya-pemasaran.index')
+                ->with('success', 'Data biaya berhasil disimpan.');
+        } catch (\Exception $e) {
+            Log::error('Gagal menyimpan biaya pemasaran: '.$e->getMessage(), [
                 'input' => $request->all(),
-                'trace' => $e->getTraceAsString(),
+                'trace' => $e->getTraceAsString()
             ]);
-
-            return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat menyimpan data.');
+            
+            return back()->withInput()
+                ->with('error', 'Gagal menyimpan: '.$e->getMessage());
         }
     }
 

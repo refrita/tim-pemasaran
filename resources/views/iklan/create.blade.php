@@ -3,19 +3,23 @@
 @section('title', 'Tambah Iklan')
 
 @section('content')
-<div class="card p-4 shadow-sm">
-    <h2 class="mb-4">Tambah Iklan Baru</h2>
+<div class="container mt-5">
+    <div class="mb-4 border-bottom pb-2 d-flex align-items-center gap-2">
+        <h2 class="fw-bold text-primary-emphasis">➕ Tambah Iklan Baru</h2>
+    </div>
 
-    {{-- Tampilkan error dari session --}}
+    {{-- Flash Error --}}
     @if(session('error'))
-        <div class="alert alert-danger mb-3">{{ session('error') }}</div>
+        <div class="alert alert-danger shadow-sm rounded-pill px-4 py-2 text-center text-dark fw-semibold">
+            ⚠️ {{ session('error') }}
+        </div>
     @endif
 
-    {{-- Tampilkan validasi error --}}
+    {{-- Validasi --}}
     @if($errors->any())
-        <div class="alert alert-danger mb-3">
+        <div class="alert alert-danger rounded-3 shadow-sm">
             <strong>Terjadi kesalahan:</strong>
-            <ul class="mb-0">
+            <ul class="mb-0 mt-1">
                 @foreach($errors->all() as $err)
                     <li>{{ $err }}</li>
                 @endforeach
@@ -23,11 +27,13 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('iklan.store') }}">
+    {{-- Form --}}
+    <form method="POST" action="{{ route('iklan.store') }}" class="shadow-sm p-4 rounded-4 border bg-light-subtle">
         @csrf
 
+        {{-- Nama Iklan --}}
         <div class="mb-3">
-            <label class="form-label">Nama Iklan</label>
+            <label class="form-label fw-semibold">📌 Nama Iklan</label>
             <input
                 type="text"
                 name="nama"
@@ -40,8 +46,9 @@
             @enderror
         </div>
 
+        {{-- Kategori --}}
         <div class="mb-3">
-            <label class="form-label">Kategori</label>
+            <label class="form-label fw-semibold">📂 Kategori</label>
             <input
                 type="text"
                 name="kategori"
@@ -54,8 +61,9 @@
             @enderror
         </div>
 
+        {{-- Tanggal Peluncuran --}}
         <div class="mb-3">
-            <label class="form-label">Tanggal Peluncuran</label>
+            <label class="form-label fw-semibold">🚀 Tanggal Peluncuran</label>
             <input
                 type="date"
                 name="tanggal_peluncuran"
@@ -68,8 +76,9 @@
             @enderror
         </div>
 
+        {{-- Tanggal Selesai --}}
         <div class="mb-3">
-            <label class="form-label">Tanggal Selesai</label>
+            <label class="form-label fw-semibold">🛑 Tanggal Selesai</label>
             <input
                 type="date"
                 name="tanggal_selesai"
@@ -82,8 +91,9 @@
             @enderror
         </div>
 
+        {{-- ID Biaya Pemasaran --}}
         <div class="mb-3">
-            <label class="form-label">ID Biaya Pemasaran</label>
+            <label class="form-label fw-semibold">💰 ID Biaya Pemasaran</label>
             <input
                 type="number"
                 name="id_biaya_pemasaran"
@@ -96,8 +106,9 @@
             @enderror
         </div>
 
+        {{-- ID Platform --}}
         <div class="mb-3">
-            <label class="form-label">ID Platform</label>
+            <label class="form-label fw-semibold">📱 ID Platform</label>
             <input
                 type="number"
                 name="id_platform"
@@ -110,8 +121,15 @@
             @enderror
         </div>
 
-        <button type="submit" class="btn btn-primary">Tambah</button>
-        <a href="{{ route('iklan.index') }}" class="btn btn-secondary ms-2">← Kembali</a>
+        {{-- Tombol --}}
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{{ route('iklan.index') }}" class="btn btn-outline-secondary rounded-pill shadow-sm">
+                ← Batal
+            </a>
+            <button type="submit" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                💾 Tambah
+            </button>
+        </div>
     </form>
 </div>
 @endsection

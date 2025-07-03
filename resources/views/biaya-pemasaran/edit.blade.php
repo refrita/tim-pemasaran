@@ -3,19 +3,23 @@
 @section('title', 'Edit Biaya Pemasaran')
 
 @section('content')
-<div class="card p-4 shadow-sm">
-    <h2 class="mb-4">Edit Biaya Pemasaran</h2>
+<div class="container mt-5">
+    <div class="mb-4 border-bottom pb-2 d-flex align-items-center gap-2">
+        <h2 class="fw-bold text-primary-emphasis">✏️ Edit Biaya Pemasaran</h2>
+    </div>
 
-    {{-- Pesan error dari session --}}
+    {{-- Flash Error --}}
     @if (session('error'))
-        <div class="alert alert-danger mb-3">{{ session('error') }}</div>
+        <div class="alert alert-danger shadow-sm rounded-pill px-4 py-2 text-center text-dark fw-semibold">
+            ⚠️ {{ session('error') }}
+        </div>
     @endif
 
-    {{-- Validasi error --}}
+    {{-- Validasi --}}
     @if ($errors->any())
-        <div class="alert alert-danger mb-3">
+        <div class="alert alert-danger rounded-3 shadow-sm">
             <strong>Terjadi kesalahan:</strong>
-            <ul class="mb-0">
+            <ul class="mb-0 mt-1">
                 @foreach ($errors->all() as $err)
                     <li>{{ $err }}</li>
                 @endforeach
@@ -23,12 +27,14 @@
         </div>
     @endif
 
-    <form action="{{ route('biaya-pemasaran.update', $biaya->id) }}" method="POST">
+    {{-- Form --}}
+    <form action="{{ route('biaya-pemasaran.update', $biaya->id) }}" method="POST" class="shadow-sm p-4 rounded-4 border bg-light-subtle">
         @csrf
         @method('PUT')
 
+        {{-- Total Anggaran --}}
         <div class="mb-3">
-            <label class="form-label">Total Anggaran</label>
+            <label class="form-label fw-semibold">💰 Total Anggaran</label>
             <input 
                 type="number" 
                 name="total_anggaran" 
@@ -41,8 +47,9 @@
             @enderror
         </div>
 
+        {{-- Anggaran Tersedia --}}
         <div class="mb-3">
-            <label class="form-label">Anggaran Tersedia</label>
+            <label class="form-label fw-semibold">📦 Anggaran Tersedia</label>
             <input 
                 type="number" 
                 name="anggaran_tersedia" 
@@ -55,8 +62,9 @@
             @enderror
         </div>
 
+        {{-- Bulan Berlaku --}}
         <div class="mb-3">
-            <label class="form-label">Bulan Berlaku</label>
+            <label class="form-label fw-semibold">📅 Bulan Berlaku</label>
             <input 
                 type="date" 
                 name="bulan_berlaku" 
@@ -69,8 +77,9 @@
             @enderror
         </div>
 
+        {{-- Status --}}
         <div class="mb-3">
-            <label class="form-label">Status</label>
+            <label class="form-label fw-semibold">📊 Status</label>
             <input 
                 type="text" 
                 name="status" 
@@ -83,8 +92,15 @@
             @enderror
         </div>
 
-        <button type="submit" class="btn btn-success">Update</button>
-        <a href="{{ route('biaya-pemasaran.index') }}" class="btn btn-secondary ms-2">← Kembali</a>
+        {{-- Tombol --}}
+        <div class="d-flex justify-content-between mt-4">
+            <a href="{{ route('biaya-pemasaran.index') }}" class="btn btn-outline-secondary rounded-pill shadow-sm">
+                ← Batal
+            </a>
+            <button type="submit" class="btn btn-warning rounded-pill px-4 fw-semibold shadow-sm">
+                🔄 Update
+            </button>
+        </div>
     </form>
 </div>
 @endsection

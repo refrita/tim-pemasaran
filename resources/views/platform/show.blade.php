@@ -3,15 +3,32 @@
 @section('title', 'Detail Platform')
 
 @section('content')
-<div class="container mt-4">
-    <h2 class="mb-4">Detail Platform</h2>
+<div class="container mt-5">
+    <div class="mb-4 border-bottom pb-2 d-flex align-items-center gap-2">
+        <h2 class="fw-bold text-primary-emphasis">📱 Detail Platform</h2>
+    </div>
 
-    <ul class="list-group mb-3">
-        <li class="list-group-item"><strong>ID:</strong> {{ $platform->id }}</li>
-        <li class="list-group-item"><strong>Nama Platform:</strong> {{ $platform->nama }}</li>
-        <li class="list-group-item"><strong>Jenis Platform:</strong> {{ $platform->jenis }}</li>
-    </ul>
+    <div class="card shadow-sm rounded-4 border border-light-subtle mb-4">
+        <div class="card-body">
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">
+                    <strong class="text-secondary">🆔 ID:</strong>
+                    <span class="ms-2 text-dark">{{ $platform->id }}</span>
+                </li>
+                <li class="list-group-item">
+                    <strong class="text-secondary">📛 Nama Platform:</strong>
+                    <span class="ms-2 text-dark">{{ $platform->nama }}</span>
+                </li>
+                <li class="list-group-item">
+                    <strong class="text-secondary">📂 Jenis Platform:</strong>
+                    <span class="ms-2 text-dark">{{ $platform->jenis }}</span>
+                </li>
+            </ul>
+        </div>
+    </div>
 
-    <a href="{{ route('platform.index') }}" class="btn btn-secondary">← Kembali ke daftar</a>
+    <a href="{{ route('platform.index') }}" class="btn btn-outline-secondary rounded-pill shadow-sm">
+        ← Kembali ke Daftar
+    </a>
 </div>
 @endsection
