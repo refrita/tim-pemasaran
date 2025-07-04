@@ -127,7 +127,7 @@ class IklanController extends Controller
                 'trace' => $e->getTraceAsString(),
             ]);
 
-            return redirect()->route('iklan.index')->with('error', 'Terjadi kesalahan saat menghapus data.');
+            return redirect()->route('iklan.index')->with('error', 'Terjadi kesalahan saat menghapus data');
         }
     }
 }

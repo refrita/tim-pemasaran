@@ -58,7 +58,7 @@ class TimPemasaranController extends Controller
             ]);
             return redirect()->back()
                    ->withInput()
-                   ->with('error', 'Terjadi kesalahan saat menyimpan data.');
+                   ->with('error', 'Data tim pemasaran gagal disimpan.');
         }
     }
 
